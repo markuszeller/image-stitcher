@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Stitcher by Markus Zeller</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/main.js" defer></script>
+</head>
+<body>
+<div class="bar">
+    <div>
+        <input type="radio" name="mode" id="mode-horizontal" value="horizontal" checked>
+        <label for="mode-horizontal">Horizontal</label>
+    </div>
+    <div>
+        <input type="radio" name="mode" id="mode-vertical" value="vertical">
+        <label for="mode-vertical">Vertical</label>
+    </div>
+    <button id="clear-button">Delete</button>
+    <button id="stitch-button">Stitch</button>
+</div>
+<div id="files" class="files">Drop images here</div>
+<ul id="images-list" class="images-list"></ul>
+<div id="result" class="result"></div>
+</body>
+</html>
