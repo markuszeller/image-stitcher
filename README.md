@@ -1,0 +1,2 @@
+# image-stitcher
+Stitch images
