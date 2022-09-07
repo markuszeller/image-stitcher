@@ -26,7 +26,7 @@ const imagesList = document.getElementById('images-list');
 const clearButton = document.getElementById('clear-button');
 const stitchButton = document.getElementById('stitch-button');
 const result = document.getElementById('result');
-const checkboxAspect = document.getElementById('keep-aspect');
+const keepAspectCheckbox = document.getElementById('keep-aspect');
 
 let dragState = false;
 let dragSource = null;
@@ -140,7 +140,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         let x = 0;
         let y = 0;
 
-        if (checkboxAspect.checked) {
+        if (keepAspectCheckbox.checked) {
             images.forEach((image) => {
                 const ratio = image.width / image.height;
                 const width = isHorizontalMode ? image.width : canvas.width;
