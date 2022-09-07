@@ -148,9 +148,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
                 ctx.drawImage(image, x, y, width, height);
                 x += isHorizontalMode ? image.width : 0;
                 y += isHorizontalMode ? 0 : image.height;
-                
             });
-
         }
 
         images.forEach(image => {
