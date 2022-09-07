@@ -141,15 +141,18 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         let y = 0;
 
         if (keepAspectCheckbox.checked) {
+
             images.forEach((image) => {
-                const ratio = image.width / image.height;
+
                 const width = isHorizontalMode ? image.width : canvas.width;
                 const height = isHorizontalMode ? canvas.height : image.height;
 
                 ctx.drawImage(image, x, y, width, height);
                 x += isHorizontalMode ? image.width : 0;
                 y += isHorizontalMode ? 0 : image.height;
+                
             });
+
         }
 
         images.forEach(image => {
