@@ -10,6 +10,7 @@ Stitch images together horizontally or vertically.
 - Delete them by dropping them over the Delete button.
 - Press the delete button to delete all images.
 - Select horizontal or vertical mode.
+- If you want to keep aspect ration, check the checkbox.
 - Hit save button to create the stitched image.
 - You can save it by downloading or copy it by right click.
 - If you like to switch the mode, do so and hit the save button, again.
