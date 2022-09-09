@@ -3,28 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Stitcher by Markus Zeller</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link href="css/output.css" rel="stylesheet">
     <script src="js/main.js" defer></script>
 </head>
 <body>
-<div class="bar">
-    <div>
-        <input type="radio" name="mode" id="mode-horizontal" value="horizontal" checked>
-        <label for="mode-horizontal">Horizontal</label>
-    </div>
-    <div>
-        <input type="radio" name="mode" id="mode-vertical" value="vertical">
-        <label for="mode-vertical">Vertical</label>
-    </div>
-    <button id="clear-button">Delete</button>
-    <button id="stitch-button">Stitch</button>
-    <div>
-    <input type="checkbox" name="keep-aspect" id="keep-aspect">
-    <label for="keep-aspect">Keep Aspect</label>
+
+<!-- tailwinds layout for an app in a container -->
+
+<div class="text-center">
+    <p class="text-2xl py-8">Image Stitch</p>
+</div>
+<div class="container px-8">
+    <div class="btn-group px-4 py-8">
+        <div class="px-4">
+            <input type="radio" class="radio" name="mode" id="mode-horizontal" value="horizontal" checked>
+            <label for="mode-horizontal">Horizontal</label>
+        </div>
+        <div class="px-4">
+            <input type="radio" class="radio" name="mode" id="mode-vertical" value="vertical">
+            <label for="mode-vertical">Vertical</label>
+        </div>
+        <div class="px-4">
+            <input type="checkbox" class="checkbox" name="keep-aspect" id="keep-aspect">
+            <label for="keep-aspect">Keep Aspect</label>
+        </div>
+        <div class="btn-group px-4">
+            <button class="btn btn-accent btn-outline" id="clear-button">Delete</button>
+            <button class="btn btn-accent btn-outline" id="stitch-button">Stitch</button>
+        </div>
     </div>
 </div>
-<div id="files" class="files">Drop images here</div>
-<ul id="images-list" class="images-list"></ul>
+</div>
+<div class="border border-dashed border-gray-500 relative" id="files" class="files">
+    <div class="text-center p-10 top-0 right-0 left-0 m-auto">
+    <h4>Drop images here</h4>
+    </div>
+</div>
+<div class="overflow-x-auto center">
+<table "table w-full ">
+<thead>
+    <tr>
+        <td class="border-b border-gray-200">Filename</td>
+    </tr>
+</thead>
+<tbody>
+<tr id="images-list" class="images-list border-b border-gray-200"></tr>
+</tbody>
+</table>
+</div>
 <div id="result" class="result"></div>
 </body>
 </html>

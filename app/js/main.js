@@ -3,6 +3,7 @@ const LOAD_EVENT = 'load';
 
 const TRUE_TEXT = 'true';
 const LIST_TAG = 'li';
+const TABLE_ROW_TAG = 'tr';
 const IMAGE_MIME_TYPE_PATTERN = /^image\//;
 const IMAGE_SYMBOL = '🎨';
 
@@ -49,34 +50,34 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
             return;
         }
 
-        const li = document.createElement(LIST_TAG);
-        li.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
-        li.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
-        li.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
+        const tr = document.createElement(TABLE_ROW_TAG);
+        tr.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
+        tr.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
+        tr.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
 
-        li.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
+        tr.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
-        li.addEventListener(DRAG_START_EVENT, () => {
-            li.classList.add(DRAG_OVER_CSS);
+        tr.addEventListener(DRAG_START_EVENT, () => {
+            tr.classList.add(DRAG_OVER_CSS);
             clearButton.classList.add(DRAG_OVER_CSS);
             dragState = true;
-            dragSource = li;
+            dragSource = tr;
         });
 
-        li.addEventListener(DRAG_END_EVENT, () => {
-            li.classList.remove(DRAG_OVER_CSS);
+        tr.addEventListener(DRAG_END_EVENT, () => {
+            tr.classList.remove(DRAG_OVER_CSS);
             clearButton.classList.remove(DRAG_OVER_CSS);
             dragState = false;
         });
 
-        li.addEventListener(DRAG_DROP_EVENT, () => {
-            (dragSource.getBoundingClientRect().top > li.getBoundingClientRect().top)
-                ? li.before(dragSource)
-                : li.after(dragSource);
+        tr.addEventListener(DRAG_DROP_EVENT, () => {
+            (dragSource.getBoundingClientRect().top > tr.getBoundingClientRect().top)
+                ? tr.before(dragSource)
+                : tr.after(dragSource);
             dragSource = null;
         });
 
-        imagesList.appendChild(li);
+        imagesList.appendChild(tr);
     });
 });
 
