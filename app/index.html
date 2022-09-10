@@ -10,22 +10,22 @@
 
 <!-- tailwinds layout for an app in a container -->
 
-<div class="container px-8 mx-auto">
+<div class="flex px-8 mx-auto">
     <p class="text-2xl py-8 text-center">Image Stitcher by Markus Zeller</p>
 </div>
-<div class="container px-8 mx-auto">
-    <div class="btn-group px-4 py-8 align-center">
+<div class="flex px-8 mx-auto justify-center">
+    <div class="form-check btn-group px-4 py-8 align-center">
         <div class="px-4">
-            <input type="radio" class="radio" name="mode" id="mode-horizontal" value="horizontal" checked>
-            <label for="mode-horizontal">Horizontal</label>
+            <input type="radio" class="form-check-input h-4 w-4" name="mode" id="mode-horizontal" value="horizontal" checked>
+            <label class="form-check-label" for="mode-horizontal">Horizontal</label>
         </div>
         <div class="px-4">
-            <input type="radio" class="radio" name="mode" id="mode-vertical" value="vertical">
-            <label for="mode-vertical">Vertical</label>
+            <input type="radio" class="form-check-input h-4 w-4" name="mode" id="mode-vertical" value="vertical">
+            <label class="form-check-label" for="mode-vertical">Vertical</label>
         </div>
         <div class="px-4">
-            <input type="checkbox" class="checkbox" name="keep-aspect" id="keep-aspect">
-            <label for="keep-aspect">Keep Aspect</label>
+            <input type="checkbox" class="form-check-input h-4 w-4" name="keep-aspect" id="keep-aspect">
+            <label class="form-check-label" for="keep-aspect">Keep Aspect</label>
         </div>
         <div class="btn-group px-4">
             <button class="btn btn-accent btn-outline" id="clear-button">Delete</button>
