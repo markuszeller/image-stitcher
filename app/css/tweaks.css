@@ -1,0 +1,15 @@
+.drag-over {
+    background: hsl(20, 100%, 90%);
+    border-style: dashed;
+    border-color: hsl(20, 100%, 60%);
+}
+
+tr {
+    border-collapse: collapse;
+    border-spacing: 4px;
+    font-size: 1rem;
+    border: none;
+    border-left: 1em solid transparent;
+    cursor: move;
+}
+
