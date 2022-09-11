@@ -166,10 +166,11 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         result.appendChild(canvas);
     };
 
-    [...imagesList.children].forEach(li => {
+    [...imagesList.children].forEach(tr => {
         const img = new Image();
         images.push(img);
-        img.src = li.dataset[DATA_FILE];
+        const td = tr.firstChild;
+        img.src = td.dataset[DATA_FILE];
         img.addEventListener(LOAD_EVENT, () => {
             minX = Math.min(minX, img.width);
             maxX = Math.max(maxX, img.width);
