@@ -2,7 +2,6 @@ const CLICK_EVENT = 'click';
 const LOAD_EVENT = 'load';
 
 const TRUE_TEXT = 'true';
-const LIST_TAG = 'li';
 const TABLE_ROW_TAG = 'tr';
 const IMAGE_MIME_TYPE_PATTERN = /^image\//;
 const IMAGE_SYMBOL = '🎨';
