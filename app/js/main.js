@@ -3,6 +3,7 @@ const LOAD_EVENT = 'load';
 
 const TRUE_TEXT = 'true';
 const TABLE_ROW_TAG = 'tr';
+const TABLE_DATA_TAG = 'td';
 const IMAGE_MIME_TYPE_PATTERN = /^image\//;
 const IMAGE_SYMBOL = '🎨';
 
@@ -50,9 +51,11 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
         }
 
         const tr = document.createElement(TABLE_ROW_TAG);
-        tr.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
-        tr.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
-        tr.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
+        const td = document.createElement(TABLE_DATA_TAG);
+        tr.appendChild(td);
+        td.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
+        td.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
+        td.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
 
         tr.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
