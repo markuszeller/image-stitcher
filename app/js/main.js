@@ -2,7 +2,8 @@ const CLICK_EVENT = 'click';
 const LOAD_EVENT = 'load';
 
 const TRUE_TEXT = 'true';
-const LIST_TAG = 'li';
+const TABLE_ROW_TAG = 'tr';
+const TABLE_DATA_TAG = 'td';
 const IMAGE_MIME_TYPE_PATTERN = /^image\//;
 const IMAGE_SYMBOL = '🎨';
 
@@ -49,34 +50,36 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
             return;
         }
 
-        const li = document.createElement(LIST_TAG);
-        li.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
-        li.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
-        li.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
+        const tr = document.createElement(TABLE_ROW_TAG);
+        const td = document.createElement(TABLE_DATA_TAG);
+        tr.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
+        tr.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
+        td.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
+        tr.appendChild(td);
 
-        li.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
+        tr.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
-        li.addEventListener(DRAG_START_EVENT, () => {
-            li.classList.add(DRAG_OVER_CSS);
+        tr.addEventListener(DRAG_START_EVENT, () => {
+            tr.classList.add(DRAG_OVER_CSS);
             clearButton.classList.add(DRAG_OVER_CSS);
             dragState = true;
-            dragSource = li;
+            dragSource = tr;
         });
 
-        li.addEventListener(DRAG_END_EVENT, () => {
-            li.classList.remove(DRAG_OVER_CSS);
+        tr.addEventListener(DRAG_END_EVENT, () => {
+            tr.classList.remove(DRAG_OVER_CSS);
             clearButton.classList.remove(DRAG_OVER_CSS);
             dragState = false;
         });
 
-        li.addEventListener(DRAG_DROP_EVENT, () => {
-            (dragSource.getBoundingClientRect().top > li.getBoundingClientRect().top)
-                ? li.before(dragSource)
-                : li.after(dragSource);
+        tr.addEventListener(DRAG_DROP_EVENT, () => {
+            (dragSource.getBoundingClientRect().top > tr.getBoundingClientRect().top)
+                ? tr.before(dragSource)
+                : tr.after(dragSource);
             dragSource = null;
         });
 
-        imagesList.appendChild(li);
+        imagesList.appendChild(tr);
     });
 });
 
@@ -163,10 +166,10 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         result.appendChild(canvas);
     };
 
-    [...imagesList.children].forEach(li => {
+    [...imagesList.children].forEach(tr => {
         const img = new Image();
         images.push(img);
-        img.src = li.dataset[DATA_FILE];
+        img.src = tr.dataset[DATA_FILE];
         img.addEventListener(LOAD_EVENT, () => {
             minX = Math.min(minX, img.width);
             maxX = Math.max(maxX, img.width);
