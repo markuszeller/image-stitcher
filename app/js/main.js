@@ -52,10 +52,10 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
 
         const tr = document.createElement(TABLE_ROW_TAG);
         const td = document.createElement(TABLE_DATA_TAG);
-        tr.appendChild(td);
-        td.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
-        td.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
+        tr.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
+        tr.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
         td.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
+        tr.appendChild(td);
 
         tr.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
@@ -169,8 +169,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     [...imagesList.children].forEach(tr => {
         const img = new Image();
         images.push(img);
-        const td = tr.firstChild;
-        img.src = td.dataset[DATA_FILE];
+        img.src = tr.dataset[DATA_FILE];
         img.addEventListener(LOAD_EVENT, () => {
             minX = Math.min(minX, img.width);
             maxX = Math.max(maxX, img.width);
