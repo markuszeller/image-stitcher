@@ -4,6 +4,11 @@ Stitch images together horizontally or vertically.
 ![MIT licence](https://img.shields.io/badge/license-MIT-green)
 ![javascript](https://img.shields.io/badge/vanilla-JavaScript-blue)
 
+You can use the image stitcher for free at:  
+[https://image-stitcher.markuszeller.com](https://image-stitcher.markuszeller.com) 
+
+No data is stored or uploaded on the server. The whole script and image processing is done in your local browser.
+
 ## Usage
 - Drop the images on the droplet. All images are shown on a list.
 - You can reorder the images via drag and drop.
