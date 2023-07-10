@@ -203,20 +203,22 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     };
 
     [...imagesList.children].forEach(tr => {
-        const img = new Image();
-        images.push(img);
-        img.src = tr.dataset[DATA_FILE];
-        img.addEventListener(LOAD_EVENT, () => {
-            minX = Math.min(minX, img.width);
-            maxX = Math.max(maxX, img.width);
-            minY = Math.min(minY, img.height);
-            maxY = Math.max(maxY, img.height);
-            sumX += img.width;
-            sumY += img.height;
+    fetch(tr.dataset[DATA_FILE])
+        .then(response => response.blob())
+        .then(blob => createImageBitmap(blob))
+        .then(bitmap => {
+        images.push(bitmap);
+        minX = Math.min(minX, bitmap.width);
+        maxX = Math.max(maxX, bitmap.width);
+        minY = Math.min(minY, bitmap.height);
+        maxY = Math.max(maxY, bitmap.height);
+        sumX += bitmap.width;
+        sumY += bitmap.height;
 
-            if (++loaded === imagesList.children.length) {
-                stitchImages();
-            }
-        });
+        if (++loaded === imagesList.children.length) {
+            stitchImages();
+        }
+        })
+        .catch(error => console.error(error));
     });
 });
