@@ -181,7 +181,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     let sumX = 0;
     let sumY = 0;
     let loaded = 0;
-    let images = [];
+    let bitmaps = [];
 
     const stitchImages = () => {
         const isHorizontalMode = document.querySelector(MODE_SELECTOR).value === HORIZONTAL_MODE;
@@ -196,25 +196,25 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         let y = 0;
 
         if (keepAspectCheckbox.checked) {
-            images.forEach(image => {
-                const width = isHorizontalMode ? image.width : canvas.width;
-                const height = isHorizontalMode ? canvas.height : image.height;
+            bitmaps.forEach(bitmap => {
+                const width = isHorizontalMode ? bitmap.width : canvas.width;
+                const height = isHorizontalMode ? canvas.height : bitmap.height;
 
-                ctx.drawImage(image, x, y, width, height);
-                x += isHorizontalMode ? image.width : 0;
-                y += isHorizontalMode ? 0 : image.height;
+                ctx.drawImage(bitmap, x, y, width, height);
+                x += isHorizontalMode ? bitmap.width : 0;
+                y += isHorizontalMode ? 0 : bitmap.height;
             });
         }
 
-        images.forEach(image => {
-            let drawWidth = image.width;
-            let drawHeight = image.height;
-            ctx.drawImage(image, 0, 0, image.width, image.height, x, y, drawWidth, drawHeight);
+        bitmaps.forEach(bitmap => {
+            let drawWidth = bitmap.width;
+            let drawHeight = bitmap.height;
+            ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, drawWidth, drawHeight);
             x += isHorizontalMode ? drawWidth : 0;
             y += isHorizontalMode ? 0 : drawHeight;
         });
 
-        images = [];
+        bitmaps = [];
         result.appendChild(canvas);
     };
 
@@ -223,7 +223,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         .then(response => response.blob())
         .then(blob => createImageBitmap(blob))
         .then(bitmap => {
-        images.push(bitmap);
+        bitmaps.push(bitmap);
         minX = Math.min(minX, bitmap.width);
         maxX = Math.max(maxX, bitmap.width);
         minY = Math.min(minY, bitmap.height);
