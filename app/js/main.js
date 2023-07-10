@@ -32,9 +32,19 @@ const clearButton = document.getElementById('clear-button');
 const stitchButton = document.getElementById('stitch-button');
 const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
+const zoomSlider = document.getElementById('zoom-slider');
+const zoomValue = document.getElementById('zoom-value');
 
 let dragState = false;
 let dragSource = null;
+
+zoomSlider.addEventListener('input', () => {
+    const zoomLevel = zoomSlider.value;
+    zoomValue.textContent = `${zoomLevel}%`;
+    const canvas = result.querySelector(CANVAS_TAG);
+    canvas.style.width = `${canvas.width * zoomLevel / 100}px`;
+    canvas.style.height = `${canvas.height * zoomLevel / 100}px`;
+  });
 
 const removeCanvas = () => {
     const canvas = result.querySelector(CANVAS_TAG);
