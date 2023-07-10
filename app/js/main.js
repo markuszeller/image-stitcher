@@ -219,6 +219,10 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
             stitchImages();
         }
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = `Error loading image: ${tr.dataset[DATA_FILE]}`;
+            document.body.appendChild(errorMessage);
+        });
     });
 });
