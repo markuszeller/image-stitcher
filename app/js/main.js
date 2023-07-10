@@ -117,7 +117,7 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
             if (dragState) {
                 const touch = e.touches[0];
                 const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (element && element.tagName === TABLE_ROW_TAG) {
+                if (element?.tagName === TABLE_ROW_TAG) {
                     (dragSource.getBoundingClientRect().top > element.getBoundingClientRect().top)
                         ? element.before(dragSource)
                         : element.after(dragSource);
