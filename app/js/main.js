@@ -60,7 +60,7 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
     fileDrop.classList.remove(DRAG_OVER_CSS);
 
     [...e.dataTransfer.files].forEach(function (file) {
-        if (!file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
+        if (null === file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
             const errorMessage = 'Invalid file type. Only image files are allowed.';
             console.error(errorMessage);
             const errorElement = document.createElement('p');
@@ -144,6 +144,14 @@ fileDrop.addEventListener(DRAG_OVER_EVENT, function (e) {
     fileDrop.classList.add(DRAG_OVER_CSS);
 });
 
+clearButton.addEventListener(CLICK_EVENT, () => {
+    while (imagesList.firstChild) {
+        imagesList.removeChild(imagesList.firstChild);
+    }
+    zoomSlider.value = 100;
+    zoomValue.textContent = '100%';
+    
+});
 
 clearButton.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
@@ -155,12 +163,12 @@ clearButton.addEventListener(DRAG_DROP_EVENT, () => {
     }
 
     imagesList.removeChild(dragSource);
-
-    zoomSlider.value = 100;
-    zoomValue.textContent = '100%';
-})
+});
 
 stitchButton.addEventListener(CLICK_EVENT, (e) => {
+    zoomSlider.value = 100;
+    zoomValue.textContent = '100%';
+
     e.preventDefault();
     removeCanvas();
 
