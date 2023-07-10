@@ -22,6 +22,10 @@ const DRAG_OVER_CSS = 'drag-over';
 const DRAG_OVER_EVENT = 'dragover';
 const DRAG_START_EVENT = 'dragstart';
 
+const TOUCH_START_EVENT = 'touchstart';
+const TOUCH_MOVE_EVENT = 'touchmove';
+const TOUCH_END_EVENT = 'touchend';
+
 const fileDrop = document.getElementById('files');
 const imagesList = document.getElementById('images-list');
 const clearButton = document.getElementById('clear-button');
@@ -46,7 +50,13 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
     fileDrop.classList.remove(DRAG_OVER_CSS);
 
     [...e.dataTransfer.files].forEach(function (file) {
-        if (null === file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
+        if (!file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
+            const errorMessage = 'Invalid file type. Only image files are allowed.';
+            console.error(errorMessage);
+            const errorElement = document.createElement('p');
+            errorElement.classList.add('error');
+            errorElement.textContent = errorMessage;
+            result.appendChild(errorElement);
             return;
         }
 
@@ -77,6 +87,32 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
                 ? tr.before(dragSource)
                 : tr.after(dragSource);
             dragSource = null;
+        });
+
+        tr.addEventListener(TOUCH_START_EVENT, () => {
+            tr.classList.add(DRAG_OVER_CSS);
+            clearButton.classList.add(DRAG_OVER_CSS);
+            dragState = true;
+            dragSource = tr;
+        });
+
+        tr.addEventListener(TOUCH_END_EVENT, () => {
+            tr.classList.remove(DRAG_OVER_CSS);
+            clearButton.classList.remove(DRAG_OVER_CSS);
+            dragState = false;
+        });
+
+        tr.addEventListener(TOUCH_MOVE_EVENT, (e) => {
+            e.preventDefault();
+            if (dragState) {
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (element && element.tagName === TABLE_ROW_TAG) {
+                    (dragSource.getBoundingClientRect().top > element.getBoundingClientRect().top)
+                        ? element.before(dragSource)
+                        : element.after(dragSource);
+                }
+            }
         });
 
         imagesList.appendChild(tr);
