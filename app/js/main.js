@@ -145,7 +145,7 @@ fileDrop.addEventListener(DRAG_OVER_EVENT, function (e) {
 });
 
 clearButton.addEventListener(CLICK_EVENT, () => {
-    while (imagesList.firstChild) {
+    while (imagesList?.firstChild) {
         imagesList.removeChild(imagesList.firstChild);
     }
 
