@@ -144,13 +144,6 @@ fileDrop.addEventListener(DRAG_OVER_EVENT, function (e) {
     fileDrop.classList.add(DRAG_OVER_CSS);
 });
 
-clearButton.addEventListener(CLICK_EVENT, () => {
-    removeCanvas();
-
-    while (imagesList.children.length > 0) {
-        imagesList.removeChild(imagesList.firstChild);
-    }
-});
 
 clearButton.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
 
@@ -162,6 +155,9 @@ clearButton.addEventListener(DRAG_DROP_EVENT, () => {
     }
 
     imagesList.removeChild(dragSource);
+
+    zoomSlider.value = 100;
+    zoomValue.textContent = '100%';
 })
 
 stitchButton.addEventListener(CLICK_EVENT, (e) => {
