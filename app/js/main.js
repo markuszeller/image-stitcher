@@ -148,6 +148,8 @@ clearButton.addEventListener(CLICK_EVENT, () => {
     while (imagesList.firstChild) {
         imagesList.removeChild(imagesList.firstChild);
     }
+
+    removeCanvas();
     zoomSlider.value = 100;
     zoomValue.textContent = '100%';
     
