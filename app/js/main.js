@@ -30,7 +30,7 @@ const fileDrop = document.getElementById('files');
 const imagesList = document.getElementById('images-list');
 const clearButton = document.getElementById('clear-button');
 const stitchButton = document.getElementById('stitch-button');
-const downloadButton = document.getElementById('download-button');
+const saveButton = document.getElementById('save-button');
 const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
 const zoomSlider = document.getElementById('zoom-slider');
@@ -39,7 +39,7 @@ const zoomValue = document.getElementById('zoom-value');
 let dragState = false;
 let dragSource = null;
 
-downloadButton.addEventListener(CLICK_EVENT, () => {
+saveButton.addEventListener(CLICK_EVENT, () => {
     const canvas = result.querySelector(CANVAS_TAG);
     if (canvas) {
         const link = document.createElement('a');
@@ -163,7 +163,7 @@ clearButton.addEventListener(CLICK_EVENT, () => {
     removeCanvas();
     zoomSlider.value = 100;
     zoomValue.textContent = '100%';
-    downloadButton.disabled = true;
+    saveButton.disabled = true;
     
 });
 
@@ -229,7 +229,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         bitmaps = [];
         result.appendChild(canvas);
 
-        downloadButton.disabled = false;
+        saveButton.disabled = false;
     };
 
     [...imagesList.children].forEach(tr => {
