@@ -13,26 +13,35 @@
     <div class="form-check btn-group px-4 py-8 align-center">
         <div class="px-4">
             <input type="radio" class="form-check-input h-4 w-4" name="mode" id="mode-horizontal" value="horizontal" checked>
-            <label class="form-check-label" for="mode-horizontal">Horizontal</label>
+            <label class="form-check-label ml-2" for="mode-horizontal">Horizontal</label>
         </div>
         <div class="px-4">
             <input type="radio" class="form-check-input h-4 w-4" name="mode" id="mode-vertical" value="vertical">
-            <label class="form-check-label" for="mode-vertical">Vertical</label>
+            <label class="form-check-label ml-2" for="mode-vertical">Vertical</label>
         </div>
         <div class="px-4">
-            <input type="checkbox" class="form-check-input h-4 w-4" name="keep-aspect" id="keep-aspect" checked>
-            <label class="form-check-label" for="keep-aspect">Keep Aspect</label>
+            <input class="form-check-input" type="checkbox" id="keep-aspect">
+            <label class="form-check-label" for="keep-aspect">
+              Keep aspect ratio
+            </label>
         </div>
-        <div class="btn-group px-4">
-            <button class="btn btn-accent btn-outline" id="clear-button">Delete</button>
-            <button class="btn btn-accent btn-outline" id="stitch-button">Stitch</button>
+        <div class="px-4">
+            <label for="zoom-slider">Zoom:</label>
+            <input type="range" id="zoom-slider" min="10" max="200" value="100">
+            <span id="zoom-value">100%</span>
+        </div>
+        <div class="btn-group px-4 ml-auto">
+            <button class="btn btn-accent btn-outline" id="clear-button">Clear</button>
+            <button class="btn btn-accent btn-outline ml-2" id="stitch-button">Stitch</button>
+            <button class="btn btn-accent btn-outline ml-2" id="save-button" disabled>Save</button>
         </div>
     </div>
 </div>
-<div class="border border-dashed border-gray-500 px-8 py-8" id="files">
-    <div class="text-center p-10 top-0 right-0 left-0 m-auto">
-    <h4>Drop images here</h4>
-    </div>
+<div class="border px-8 py-8 dropzone" id="files">
+  <div class="text-center">
+    <i class="dropzone-icon fas fa-cloud-upload-alt"></i>
+    <h4 class="dropzone-text">Drop images here</h4>
+  </div>
 </div>
 <div class="overflow-x-auto center px-4 py-4">
 <table class="table w-full">
