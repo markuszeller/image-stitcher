@@ -35,6 +35,36 @@ const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
 const zoomSlider = document.getElementById('zoom-slider');
 const zoomValue = document.getElementById('zoom-value');
+const errorModal = document.createElement('div');
+
+errorModal.classList.add('modal');
+errorModal.innerHTML = `
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p class="error-message"></p>
+  </div>
+`;
+
+const errorMessage = errorModal.querySelector('.error-message');
+const closeButton = errorModal.querySelector('.close');
+
+closeButton.addEventListener(CLICK_EVENT, () => {
+    errorModal.style.display = 'none';
+  });
+
+
+const showError = (message) => {
+    errorMessage.textContent = message;
+    errorModal.style.display = 'block';
+  };
+
+const handleImageLoadError = (tr, error) => {
+    const errorMessage = `Error loading image: ${tr.dataset[DATA_FILE]}`;
+    console.error(errorMessage, error);
+    showError(errorMessage);
+};
+
+document.body.appendChild(errorModal);
 
 let dragState = false;
 let dragSource = null;
@@ -73,11 +103,7 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
     [...e.dataTransfer.files].forEach(function (file) {
         if (null === file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
             const errorMessage = 'Invalid file type. Only image files are allowed.';
-            console.error(errorMessage);
-            const errorElement = document.createElement('p');
-            errorElement.classList.add('error');
-            errorElement.textContent = errorMessage;
-            result.appendChild(errorElement);
+            showError(errorMessage);
             return;
         }
 
@@ -250,9 +276,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         }
         })
         .catch(error => {
-            const errorMessage = document.createElement('p');
-            errorMessage.textContent = `Error loading image: ${tr.dataset[DATA_FILE]}`;
-            document.body.appendChild(errorMessage);
+            showError(error);
         });
     });
 });
