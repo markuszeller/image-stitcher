@@ -22,15 +22,40 @@ const DRAG_OVER_CSS = 'drag-over';
 const DRAG_OVER_EVENT = 'dragover';
 const DRAG_START_EVENT = 'dragstart';
 
+const TOUCH_START_EVENT = 'touchstart';
+const TOUCH_MOVE_EVENT = 'touchmove';
+const TOUCH_END_EVENT = 'touchend';
+
 const fileDrop = document.getElementById('files');
 const imagesList = document.getElementById('images-list');
 const clearButton = document.getElementById('clear-button');
 const stitchButton = document.getElementById('stitch-button');
+const saveButton = document.getElementById('save-button');
 const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
+const zoomSlider = document.getElementById('zoom-slider');
+const zoomValue = document.getElementById('zoom-value');
 
 let dragState = false;
 let dragSource = null;
+
+saveButton.addEventListener(CLICK_EVENT, () => {
+    const canvas = result.querySelector(CANVAS_TAG);
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'stitched-image.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+});
+
+zoomSlider.addEventListener('input', () => {
+    const zoomLevel = zoomSlider.value;
+    zoomValue.textContent = `${zoomLevel}%`;
+    const canvas = result.querySelector(CANVAS_TAG);
+    canvas.style.width = `${canvas.width * zoomLevel / 100}px`;
+    canvas.style.height = `${canvas.height * zoomLevel / 100}px`;
+  });
 
 const removeCanvas = () => {
     const canvas = result.querySelector(CANVAS_TAG);
@@ -47,6 +72,12 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
 
     [...e.dataTransfer.files].forEach(function (file) {
         if (null === file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
+            const errorMessage = 'Invalid file type. Only image files are allowed.';
+            console.error(errorMessage);
+            const errorElement = document.createElement('p');
+            errorElement.classList.add('error');
+            errorElement.textContent = errorMessage;
+            result.appendChild(errorElement);
             return;
         }
 
@@ -79,6 +110,32 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
             dragSource = null;
         });
 
+        tr.addEventListener(TOUCH_START_EVENT, () => {
+            tr.classList.add(DRAG_OVER_CSS);
+            clearButton.classList.add(DRAG_OVER_CSS);
+            dragState = true;
+            dragSource = tr;
+        });
+
+        tr.addEventListener(TOUCH_END_EVENT, () => {
+            tr.classList.remove(DRAG_OVER_CSS);
+            clearButton.classList.remove(DRAG_OVER_CSS);
+            dragState = false;
+        });
+
+        tr.addEventListener(TOUCH_MOVE_EVENT, (e) => {
+            e.preventDefault();
+            if (dragState) {
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (element?.tagName === TABLE_ROW_TAG) {
+                    (dragSource.getBoundingClientRect().top > element.getBoundingClientRect().top)
+                        ? element.before(dragSource)
+                        : element.after(dragSource);
+                }
+            }
+        });
+
         imagesList.appendChild(tr);
     });
 });
@@ -99,11 +156,15 @@ fileDrop.addEventListener(DRAG_OVER_EVENT, function (e) {
 });
 
 clearButton.addEventListener(CLICK_EVENT, () => {
-    removeCanvas();
-
-    while (imagesList.children.length > 0) {
+    while (imagesList?.firstChild) {
         imagesList.removeChild(imagesList.firstChild);
     }
+
+    removeCanvas();
+    zoomSlider.value = 100;
+    zoomValue.textContent = '100%';
+    saveButton.disabled = true;
+    
 });
 
 clearButton.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
@@ -116,9 +177,12 @@ clearButton.addEventListener(DRAG_DROP_EVENT, () => {
     }
 
     imagesList.removeChild(dragSource);
-})
+});
 
 stitchButton.addEventListener(CLICK_EVENT, (e) => {
+    zoomSlider.value = 100;
+    zoomValue.textContent = '100%';
+
     e.preventDefault();
     removeCanvas();
 
@@ -129,7 +193,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     let sumX = 0;
     let sumY = 0;
     let loaded = 0;
-    let images = [];
+    let bitmaps = [];
 
     const stitchImages = () => {
         const isHorizontalMode = document.querySelector(MODE_SELECTOR).value === HORIZONTAL_MODE;
@@ -144,43 +208,51 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         let y = 0;
 
         if (keepAspectCheckbox.checked) {
-            images.forEach(image => {
-                const width = isHorizontalMode ? image.width : canvas.width;
-                const height = isHorizontalMode ? canvas.height : image.height;
+            bitmaps.forEach(bitmap => {
+                const width = isHorizontalMode ? bitmap.width : canvas.width;
+                const height = isHorizontalMode ? canvas.height : bitmap.height;
 
-                ctx.drawImage(image, x, y, width, height);
-                x += isHorizontalMode ? image.width : 0;
-                y += isHorizontalMode ? 0 : image.height;
+                ctx.drawImage(bitmap, x, y, width, height);
+                x += isHorizontalMode ? bitmap.width : 0;
+                y += isHorizontalMode ? 0 : bitmap.height;
             });
         }
 
-        images.forEach(image => {
-            let drawWidth = image.width;
-            let drawHeight = image.height;
-            ctx.drawImage(image, 0, 0, image.width, image.height, x, y, drawWidth, drawHeight);
+        bitmaps.forEach(bitmap => {
+            let drawWidth = bitmap.width;
+            let drawHeight = bitmap.height;
+            ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, drawWidth, drawHeight);
             x += isHorizontalMode ? drawWidth : 0;
             y += isHorizontalMode ? 0 : drawHeight;
         });
 
-        images = [];
+        bitmaps = [];
         result.appendChild(canvas);
+
+        saveButton.disabled = false;
     };
 
     [...imagesList.children].forEach(tr => {
-        const img = new Image();
-        images.push(img);
-        img.src = tr.dataset[DATA_FILE];
-        img.addEventListener(LOAD_EVENT, () => {
-            minX = Math.min(minX, img.width);
-            maxX = Math.max(maxX, img.width);
-            minY = Math.min(minY, img.height);
-            maxY = Math.max(maxY, img.height);
-            sumX += img.width;
-            sumY += img.height;
+    fetch(tr.dataset[DATA_FILE])
+        .then(response => response.blob())
+        .then(blob => createImageBitmap(blob))
+        .then(bitmap => {
+        bitmaps.push(bitmap);
+        minX = Math.min(minX, bitmap.width);
+        maxX = Math.max(maxX, bitmap.width);
+        minY = Math.min(minY, bitmap.height);
+        maxY = Math.max(maxY, bitmap.height);
+        sumX += bitmap.width;
+        sumY += bitmap.height;
 
-            if (++loaded === imagesList.children.length) {
-                stitchImages();
-            }
+        if (++loaded === imagesList.children.length) {
+            stitchImages();
+        }
+        })
+        .catch(error => {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = `Error loading image: ${tr.dataset[DATA_FILE]}`;
+            document.body.appendChild(errorMessage);
         });
     });
 });
