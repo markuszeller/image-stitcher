@@ -42,8 +42,9 @@ dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
 
 const showError = message => {
     errorMessage.textContent = message;
-    errorModal.style.display = 'block';
-  };
+    dialog.showModal();
+    window.setTimeout(() => dialog.close(), 4000);
+};
 
 const handleImageLoadError = (tr, error) => {
     const errorMessage = `Error loading image: ${tr.dataset[DATA_FILE]}`;
