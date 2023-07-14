@@ -40,12 +40,7 @@ const errorMessage = dialog.querySelector('.error-message');
 
 dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
 
-closeButton.addEventListener(CLICK_EVENT, () => {
-    errorModal.style.display = 'none';
-  });
-
-
-const showError = (message) => {
+const showError = message => {
     errorMessage.textContent = message;
     errorModal.style.display = 'block';
   };
