@@ -35,6 +35,8 @@ const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
 const zoomSlider = document.getElementById('zoom-slider');
 const zoomValue = document.getElementById('zoom-value');
+
+const MODAL_CLOSE_TIMEOUT_MS = 4000;
 const dialog = document.getElementById('error-modal');
 const errorMessage = dialog.querySelector('.error-message');
 
@@ -43,7 +45,7 @@ dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
 const showError = message => {
     errorMessage.textContent = message;
     dialog.showModal();
-    window.setTimeout(() => dialog.close(), 4000);
+    window.setTimeout(() => dialog.close(), MODAL_CLOSE_TIMEOUT_MS);
 };
 
 const handleImageLoadError = (tr, error) => {
