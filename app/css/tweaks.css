@@ -113,6 +113,7 @@ tr {
 .dropzone-text {
     font-size: 1.5rem;
     color: #718096;
+    user-select: none;
 }
 
 .dropzone-icon {
