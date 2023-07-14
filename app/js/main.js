@@ -35,15 +35,8 @@ const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
 const zoomSlider = document.getElementById('zoom-slider');
 const zoomValue = document.getElementById('zoom-value');
-const errorModal = document.createElement('div');
-
-errorModal.classList.add('modal');
-errorModal.innerHTML = `
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p class="error-message"></p>
-  </div>
-`;
+const dialog = document.getElementById('error-modal');
+const errorMessage = dialog.querySelector('.error-message');
 
 const errorMessage = errorModal.querySelector('.error-message');
 const closeButton = errorModal.querySelector('.close');
@@ -60,11 +53,8 @@ const showError = (message) => {
 
 const handleImageLoadError = (tr, error) => {
     const errorMessage = `Error loading image: ${tr.dataset[DATA_FILE]}`;
-    console.error(errorMessage, error);
     showError(errorMessage);
 };
-
-document.body.appendChild(errorModal);
 
 let dragState = false;
 let dragSource = null;
