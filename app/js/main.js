@@ -38,8 +38,7 @@ const zoomValue = document.getElementById('zoom-value');
 const dialog = document.getElementById('error-modal');
 const errorMessage = dialog.querySelector('.error-message');
 
-const errorMessage = errorModal.querySelector('.error-message');
-const closeButton = errorModal.querySelector('.close');
+dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
 
 closeButton.addEventListener(CLICK_EVENT, () => {
     errorModal.style.display = 'none';
