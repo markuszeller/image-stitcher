@@ -48,9 +48,8 @@ const showError = message => {
     window.setTimeout(() => dialog.close(), MODAL_CLOSE_TIMEOUT_MS);
 };
 
-const handleImageLoadError = (tr, error) => {
-    const errorMessage = `Error loading image: ${tr.dataset[DATA_FILE]}`;
-    showError(errorMessage);
+const handleImageLoadError = tr => {
+    showError(`Error loading image: ${tr.dataset[DATA_FILE]}`);
 };
 
 let dragState = false;
