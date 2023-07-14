@@ -45,7 +45,7 @@ dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
 const showError = message => {
     errorMessage.textContent = message;
     dialog.showModal();
-    window.setTimeout(() => dialog.close(), MODAL_CLOSE_TIMEOUT_MS);
+    window.setTimeout(() => { dialog.close() }, MODAL_CLOSE_TIMEOUT_MS);
 };
 
 const handleImageLoadError = tr => {
