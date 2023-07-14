@@ -15,79 +15,79 @@ tr {
 
 /* Default styles */
 .flex {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .form-check {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .border {
-  min-height: 200px;
+    min-height: 200px;
 }
 
 .table {
-  border-collapse: collapse;
-  width: 100%;
+    border-collapse: collapse;
+    width: 100%;
 }
 
 .table td {
-  border-bottom: 1px solid #ddd;
-  padding: 8px;
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
 }
 
 /* Media queries */
 @media screen and (min-width: 640px) {
-  /* Adjust layout for small screens */
-  .flex {
-    flex-direction: column;
-  }
+    /* Adjust layout for small screens */
+    .flex {
+        flex-direction: column;
+    }
 
-  .form-check {
-    flex-direction: row;
-    justify-content: flex-start;
-    margin-right: 24px;
-  }
+    .form-check {
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-right: 24px;
+    }
 
-  .btn-group {
-    margin-left: 24px;
-  }
+    .btn-group {
+        margin-left: 24px;
+    }
 
-  .border {
-    min-height: 150px;
-  }
+    .border {
+        min-height: 150px;
+    }
 }
 
 @media screen and (min-width: 768px) {
-  /* Adjust layout for tablets */
-  .flex {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+    /* Adjust layout for tablets */
+    .flex {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 
-  .form-check {
-    justify-content: center;
-    margin-right: 0;
-  }
+    .form-check {
+        justify-content: center;
+        margin-right: 0;
+    }
 
-  .btn-group {
-    margin-left: 0;
-  }
+    .btn-group {
+        margin-left: 0;
+    }
 
-  .border {
-    min-height: 250px;
-  }
+    .border {
+        min-height: 250px;
+    }
 }
 
 @media screen and (min-width: 1024px) {
@@ -108,26 +108,26 @@ tr {
     border-style: dashed;
     border-color: #ccc;
     background-color: #1a2f3d;
-  }
-  
-  .dropzone-text {
+}
+
+.dropzone-text {
     font-size: 1.5rem;
     color: #718096;
-  }
-  
-  .dropzone-icon {
+}
+
+.dropzone-icon {
     font-size: 4rem;
     color: #718096;
-  }
-  
-  .dropzone:hover {
+}
+
+.dropzone:hover {
     border-color: #4a5568;
-  }
-  
-  .dropzone:hover .dropzone-text,
-  .dropzone:hover .dropzone-icon {
+}
+
+.dropzone:hover .dropzone-text,
+.dropzone:hover .dropzone-icon {
     color: #4a5568;
-  }
+}
 
 dialog::backdrop {
     background: rgba(0, 0, 0, .7);
