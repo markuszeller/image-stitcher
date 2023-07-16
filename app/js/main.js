@@ -10,7 +10,9 @@ const CANVAS_CONTEXT = '2d';
 const CANVAS_TAG = 'canvas';
 const DRAGGABLE_ATTRIBUTE = 'draggable';
 const DATA_FILE = 'file';
+const DATA_NAME = 'name';
 const DATA_FILE_ATTRIBUTE = `data-${DATA_FILE}`;
+const DATA_FILENAME_ATTRIBUTE = `data-${DATA_NAME}`;
 const MODE_SELECTOR = 'input[name=mode]:checked';
 const HORIZONTAL_MODE = 'horizontal';
 
@@ -101,6 +103,7 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
         const td = document.createElement(TABLE_DATA_TAG);
         tr.setAttribute(DRAGGABLE_ATTRIBUTE, TRUE_TEXT);
         tr.setAttribute(DATA_FILE_ATTRIBUTE, URL.createObjectURL(file));
+        tr.setAttribute(DATA_FILENAME_ATTRIBUTE, file.name);
         td.appendChild(document.createTextNode(`${IMAGE_SYMBOL} ${file.name}`));
         tr.appendChild(td);
 
@@ -249,7 +252,8 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     };
 
     [...imagesList.children].forEach(tr => {
-    fetch(tr.dataset[DATA_FILE])
+        const fileName = tr.dataset[DATA_NAME];
+        fetch(fileName)
         .then(response => response.blob())
         .then(blob => createImageBitmap(blob))
         .then(bitmap => {
