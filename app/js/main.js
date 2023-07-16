@@ -90,9 +90,7 @@ fileDrop.addEventListener(DRAG_DROP_EVENT, function (e) {
 
     [...e.dataTransfer.files].forEach(function (file) {
         if (null === file.type.match(IMAGE_MIME_TYPE_PATTERN)) {
-            const errorMessage = 'Invalid file type. Only image files are allowed.';
-            showError(errorMessage);
-            return;
+            return showError(`Invalid file type. Only image files are allowed. File: ${file.name}`);
         }
 
         const tr = document.createElement(TABLE_ROW_TAG);
@@ -266,7 +264,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         }
         })
         .catch(error => {
-            showError(error);
+            showError(`${error.message} File: ${fileName}`);
         });
     });
 });
