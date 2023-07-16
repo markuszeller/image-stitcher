@@ -1,7 +1,18 @@
+:root {
+    --drag-background: hsl(20, 100%, 90%);
+    --drag-border: hsl(20, 100%, 60%);
+    --table-border-bottom: hsl(0, 0%, 87%);
+    --table-border: hsl(0, 0%, 80%);
+    --table-background: hsl(204, 40%, 17%);
+    --dropzone-text: hsl(216, 15%, 52%);
+    --dropzone-hover: hsl(218, 17%, 35%);
+    --dialog-backdrop: hsla(0, 0%, 0%, 0.7);
+}
+
 .drag-over {
-    background: hsl(20, 100%, 90%);
+    background: var(--drag-background);
     border-style: dashed;
-    border-color: hsl(20, 100%, 60%);
+    border-color: var(--drag-border);
 }
 
 tr {
@@ -43,7 +54,7 @@ tr {
 }
 
 .table td {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--table-border-bottom);
     padding: 8px;
 }
 
@@ -106,30 +117,30 @@ tr {
 .border {
     border-width: 2px;
     border-style: dashed;
-    border-color: #ccc;
-    background-color: #1a2f3d;
+    border-color: var(--table-border);
+    background-color: var(--table-background);
 }
 
 .dropzone-text {
     font-size: 1.5rem;
-    color: #718096;
+    color: var(--dropzone-text);
     user-select: none;
 }
 
 .dropzone-icon {
     font-size: 4rem;
-    color: #718096;
+    color: var(--dropzone-text);
 }
 
 .dropzone:hover {
-    border-color: #4a5568;
+    border-color: var(--dropzone-hover);
 }
 
 .dropzone:hover .dropzone-text,
 .dropzone:hover .dropzone-icon {
-    color: #4a5568;
+    color: var(--dropzone-hover);
 }
 
 dialog::backdrop {
-    background: rgba(0, 0, 0, .7);
+    background: var(--dialog-backdrop);
 }
