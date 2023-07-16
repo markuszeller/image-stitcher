@@ -1,4 +1,6 @@
 const CLICK_EVENT = 'click';
+const CHANGE_EVENT = 'change';
+const INPUT_EVENT = 'input';
 
 const TRUE_TEXT = 'true';
 const TABLE_ROW_TAG = 'tr';
