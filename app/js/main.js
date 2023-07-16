@@ -1,4 +1,6 @@
 const CLICK_EVENT = 'click';
+const CHANGE_EVENT = 'change';
+const INPUT_EVENT = 'input';
 
 const TRUE_TEXT = 'true';
 const TABLE_ROW_TAG = 'tr';
@@ -11,8 +13,10 @@ const CANVAS_TAG = 'canvas';
 const DRAGGABLE_ATTRIBUTE = 'draggable';
 const DATA_FILE = 'file';
 const DATA_NAME = 'name';
+const DATA_THEME = 'theme';
 const DATA_FILE_ATTRIBUTE = `data-${DATA_FILE}`;
 const DATA_FILENAME_ATTRIBUTE = `data-${DATA_NAME}`;
+const DATA_THEME_ATTRIBUTE = `data-${DATA_THEME}`;
 const MODE_SELECTOR = 'input[name=mode]:checked';
 const HORIZONTAL_MODE = 'horizontal';
 
@@ -36,6 +40,8 @@ const result = document.getElementById('result');
 const keepAspectCheckbox = document.getElementById('keep-aspect');
 const zoomSlider = document.getElementById('zoom-slider');
 const zoomValue = document.getElementById('zoom-value');
+const themeSelector = document.getElementById('theme-select');
+const themes = [...themeSelector.querySelectorAll('option')].map(option => { return option.value; });
 
 const MODAL_CLOSE_TIMEOUT_MS = 4000;
 const dialog = document.getElementById('error-modal');
@@ -67,13 +73,24 @@ saveButton.addEventListener(CLICK_EVENT, () => {
     }
 });
 
-zoomSlider.addEventListener('input', () => {
+zoomSlider.addEventListener(INPUT_EVENT, () => {
     const zoomLevel = zoomSlider.value;
     zoomValue.textContent = `${zoomLevel}%`;
     const canvas = result.querySelector(CANVAS_TAG);
     canvas.style.width = `${canvas.width * zoomLevel / 100}px`;
     canvas.style.height = `${canvas.height * zoomLevel / 100}px`;
-  });
+});
+
+themeSelector.addEventListener(CHANGE_EVENT, () => {
+    const value = themeSelector.value;
+    document.body.setAttribute(DATA_THEME_ATTRIBUTE, value);
+    if (themes.includes(value)) {
+        localStorage.setItem(DATA_THEME, value);
+    }
+});
+
+themeSelector.value = localStorage.getItem(DATA_THEME) || themes[0];
+themeSelector.dispatchEvent(new Event(CHANGE_EVENT));
 
 const removeCanvas = () => {
     const canvas = result.querySelector(CANVAS_TAG);
