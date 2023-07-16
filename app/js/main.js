@@ -38,13 +38,18 @@ const zoomValue = document.getElementById('zoom-value');
 const MODAL_CLOSE_TIMEOUT_MS = 4000;
 const dialog = document.getElementById('error-modal');
 const errorMessage = dialog.querySelector('.error-message');
+let dialogTimeout = 0;
 
-dialog.addEventListener(CLICK_EVENT, () => { dialog.close(); });
+dialog.addEventListener(CLICK_EVENT, () => {
+    dialogTimeout && clearTimeout(dialogTimeout);
+    dialogTimeout = 0;
+    dialog.close();
+});
 
 const showError = message => {
     errorMessage.textContent = message;
     dialog.showModal();
-    window.setTimeout(() => { dialog.close() }, MODAL_CLOSE_TIMEOUT_MS);
+    dialogTimeout = window.setTimeout(() => { dialog.close() }, MODAL_CLOSE_TIMEOUT_MS);
 };
 
 const handleImageLoadError = tr => {
