@@ -16,8 +16,12 @@ No data is stored or uploaded on the server. The whole script and image processi
 - Press the delete button to delete all images.
 - Select horizontal or vertical mode.
 - If you want to keep aspect ratio, check the checkbox.
-- Hit save button to create the stitched image.
-- You can save it by downloading or copy it by right click.
-- If you like to switch the mode, do so and hit the save button, again.
+- You can scale the result image with the zoom slider. Using the save button always saves with 100%.
+- Hit **stitch** button to create the stitched image.
+- You can save it by
+  - downloading
+  - copy it by right click
+  - hitting the **save** button
+- If you like to switch the mode, do so and hit the **stitch** button, again.
 
 No server required. You can open the **index.html** in the browser.
