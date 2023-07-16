@@ -1,5 +1,4 @@
 const CLICK_EVENT = 'click';
-const LOAD_EVENT = 'load';
 
 const TRUE_TEXT = 'true';
 const TABLE_ROW_TAG = 'tr';
