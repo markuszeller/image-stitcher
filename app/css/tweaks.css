@@ -1,12 +1,12 @@
 :root {
-    --drag-background: hsl(20, 100%, 90%);
-    --drag-border: hsl(20, 100%, 60%);
-    --table-border-bottom: hsl(0, 0%, 87%);
-    --table-border: hsl(0, 0%, 80%);
-    --table-background: hsl(204, 40%, 17%);
-    --dropzone-text: hsl(216, 15%, 52%);
-    --dropzone-hover: hsl(218, 17%, 35%);
-    --dialog-backdrop: hsla(0, 0%, 0%, 0.7);
+    --drag-background: hsl(var(--af));
+    --drag-border: hsl(var(--af));
+    --table-border-bottom: hsl(var(--su));
+    --table-border: hsl(var(--pc));
+    --table-background: hsl(var(--nf));
+    --dropzone-text: hsl(var(--nc));
+    --dropzone-hover: hsl(var(--af));
+    --dialog-backdrop: hsla(var(--pc), 0.7);
 }
 
 .drag-over {
