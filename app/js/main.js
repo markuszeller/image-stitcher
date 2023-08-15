@@ -264,7 +264,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
 
     [...imagesList.children].forEach(tr => {
         const fileName = tr.dataset[DATA_NAME];
-        fetch(fileName)
+        fetch(tr.dataset[DATA_FILE])
         .then(response => response.blob())
         .then(blob => createImageBitmap(blob))
         .then(bitmap => {
