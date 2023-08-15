@@ -268,17 +268,17 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         .then(response => response.blob())
         .then(blob => createImageBitmap(blob))
         .then(bitmap => {
-        bitmaps.push(bitmap);
-        minX = Math.min(minX, bitmap.width);
-        maxX = Math.max(maxX, bitmap.width);
-        minY = Math.min(minY, bitmap.height);
-        maxY = Math.max(maxY, bitmap.height);
-        sumX += bitmap.width;
-        sumY += bitmap.height;
+            bitmaps.push(bitmap);
+            minX = Math.min(minX, bitmap.width);
+            maxX = Math.max(maxX, bitmap.width);
+            minY = Math.min(minY, bitmap.height);
+            maxY = Math.max(maxY, bitmap.height);
+            sumX += bitmap.width;
+            sumY += bitmap.height;
 
-        if (++loaded === imagesList.children.length) {
-            stitchImages();
-        }
+            if (++loaded === imagesList.children.length) {
+                stitchImages();
+            }
         })
         .catch(error => {
             showError(`${error.message} File: ${fileName}`);
