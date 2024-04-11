@@ -194,7 +194,7 @@ clearButton.addEventListener(CLICK_EVENT, () => {
     zoomSlider.value = 100;
     zoomValue.textContent = '100%';
     saveButton.disabled = true;
-    
+
 });
 
 clearButton.addEventListener(DRAG_OVER_EVENT, e => e.preventDefault());
