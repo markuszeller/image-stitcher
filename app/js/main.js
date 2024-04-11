@@ -238,7 +238,8 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         let y = 0;
 
         if (keepAspectCheckbox.checked) {
-            bitmaps.forEach(bitmap => {
+            [...imagesList.children].forEach(tr => {
+                const bitmap = bitmaps[tr.dataset.bitmapIndex];
                 const width = isHorizontalMode ? bitmap.width : canvas.width;
                 const height = isHorizontalMode ? canvas.height : bitmap.height;
 
@@ -246,15 +247,16 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
                 x += isHorizontalMode ? bitmap.width : 0;
                 y += isHorizontalMode ? 0 : bitmap.height;
             });
+        } else {
+            [...imagesList.children].forEach(tr => {
+                const bitmap = bitmaps[tr.dataset.bitmapIndex];
+                let drawWidth = bitmap.width;
+                let drawHeight = bitmap.height;
+                ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, drawWidth, drawHeight);
+                x += isHorizontalMode ? drawWidth : 0;
+                y += isHorizontalMode ? 0 : drawHeight;
+            });
         }
-
-        bitmaps.forEach(bitmap => {
-            let drawWidth = bitmap.width;
-            let drawHeight = bitmap.height;
-            ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, drawWidth, drawHeight);
-            x += isHorizontalMode ? drawWidth : 0;
-            y += isHorizontalMode ? 0 : drawHeight;
-        });
 
         bitmaps = [];
         result.appendChild(canvas);
@@ -268,7 +270,7 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
         .then(response => response.blob())
         .then(blob => createImageBitmap(blob))
         .then(bitmap => {
-            bitmaps.push(bitmap);
+            tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1 + "";
             minX = Math.min(minX, bitmap.width);
             maxX = Math.max(maxX, bitmap.width);
             minY = Math.min(minY, bitmap.height);
