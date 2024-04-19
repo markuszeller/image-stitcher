@@ -67,12 +67,13 @@ document.addEventListener(TOUCH_START_EVENT, handleTouchStart);
 document.addEventListener(TOUCH_MOVE_EVENT, handleTouchMove);
 document.addEventListener(TOUCH_END_EVENT, handleTouchEnd);
 
-function getTouchTargetElement(e) {
+const getTouchTargetElement = (e) => {
     const touch = e.changedTouches[0];
-    return document.elementFromPoint(touch.clientX, touch.clientY);
-}
 
-function handleTouchStart(e) {
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+};
+
+const handleTouchStart = (e) => {
     e.preventDefault();
 
     const targetElement = getTouchTargetElement(e);
@@ -82,12 +83,15 @@ function handleTouchStart(e) {
     clearButton.classList.add(DRAG_OVER_CSS);
     dragState = true;
     dragSource = targetElement;
-}
+};
 
-function handleTouchMove(e) {
+const handleTouchMove = (e) => {
     e.preventDefault();
 
-    if (!dragState) return;
+    if (!dragState) {
+
+        return;
+    }
 
     const targetElement = getTouchTargetElement(e);
     if (!targetElement || targetElement.tagName !== TABLE_ROW_TAG) return;
@@ -97,14 +101,19 @@ function handleTouchMove(e) {
 
     if (sourceRect.top > targetRect.top) {
         targetElement.before(dragSource);
-    } else {
-        targetElement.after(dragSource);
+
+        return;
     }
-}
+    
+    targetElement.after(dragSource);
+    
+};
 
-function handleTouchEnd(e) {
-    if (!dragState) return;
+const handleTouchEnd = (e) => {
+    if (!dragState) {
 
+        return;
+    }
     dragSource.classList.remove(DRAG_OVER_CSS);
     clearButton.classList.remove(DRAG_OVER_CSS);
     dragState = false;
