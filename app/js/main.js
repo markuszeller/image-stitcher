@@ -63,10 +63,6 @@ const showError = message => {
 let dragState = false;
 let dragSource = null;
 
-document.addEventListener(TOUCH_START_EVENT, handleTouchStart);
-document.addEventListener(TOUCH_MOVE_EVENT, handleTouchMove);
-document.addEventListener(TOUCH_END_EVENT, handleTouchEnd);
-
 const getTouchTargetElement = (e) => {
     const touch = e.changedTouches[0];
 
@@ -119,6 +115,10 @@ const handleTouchEnd = (e) => {
     dragState = false;
     dragSource = null;
 }
+
+document.addEventListener(TOUCH_START_EVENT, handleTouchStart);
+document.addEventListener(TOUCH_MOVE_EVENT, handleTouchMove);
+document.addEventListener(TOUCH_END_EVENT, handleTouchEnd);
 
 saveButton.addEventListener(CLICK_EVENT, () => {
     const canvas = result.querySelector(CANVAS_TAG);
