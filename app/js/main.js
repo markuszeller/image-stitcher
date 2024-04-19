@@ -63,6 +63,63 @@ const showError = message => {
 let dragState = false;
 let dragSource = null;
 
+const getTouchTargetElement = (e) => {
+    const touch = e.changedTouches[0];
+
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+};
+
+const handleTouchStart = (e) => {
+    e.preventDefault();
+
+    const targetElement = getTouchTargetElement(e);
+    if (!targetElement || targetElement.tagName !== TABLE_ROW_TAG) return;
+
+    targetElement.classList.add(DRAG_OVER_CSS);
+    clearButton.classList.add(DRAG_OVER_CSS);
+    dragState = true;
+    dragSource = targetElement;
+};
+
+const handleTouchMove = (e) => {
+    e.preventDefault();
+
+    if (!dragState) {
+
+        return;
+    }
+
+    const targetElement = getTouchTargetElement(e);
+    if (!targetElement || targetElement.tagName !== TABLE_ROW_TAG) return;
+
+    const sourceRect = dragSource.getBoundingClientRect();
+    const targetRect = targetElement.getBoundingClientRect();
+
+    if (sourceRect.top > targetRect.top) {
+        targetElement.before(dragSource);
+
+        return;
+    }
+
+    targetElement.after(dragSource);
+
+};
+
+const handleTouchEnd = (e) => {
+    if (!dragState) {
+
+        return;
+    }
+    dragSource.classList.remove(DRAG_OVER_CSS);
+    clearButton.classList.remove(DRAG_OVER_CSS);
+    dragState = false;
+    dragSource = null;
+}
+
+document.addEventListener(TOUCH_START_EVENT, handleTouchStart);
+document.addEventListener(TOUCH_MOVE_EVENT, handleTouchMove);
+document.addEventListener(TOUCH_END_EVENT, handleTouchEnd);
+
 saveButton.addEventListener(CLICK_EVENT, () => {
     const canvas = result.querySelector(CANVAS_TAG);
     if (canvas) {
@@ -95,7 +152,7 @@ themeSelector.dispatchEvent(new Event(CHANGE_EVENT));
 const removeCanvas = () => {
     const canvas = result.querySelector(CANVAS_TAG);
 
-    if(canvas) {
+    if (canvas) {
         result.removeChild(canvas);
     }
 };
@@ -267,23 +324,23 @@ stitchButton.addEventListener(CLICK_EVENT, (e) => {
     [...imagesList.children].forEach(tr => {
         const fileName = tr.dataset[DATA_NAME];
         fetch(tr.dataset[DATA_FILE])
-        .then(response => response.blob())
-        .then(blob => createImageBitmap(blob))
-        .then(bitmap => {
-            tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1 + "";
-            minX = Math.min(minX, bitmap.width);
-            maxX = Math.max(maxX, bitmap.width);
-            minY = Math.min(minY, bitmap.height);
-            maxY = Math.max(maxY, bitmap.height);
-            sumX += bitmap.width;
-            sumY += bitmap.height;
+            .then(response => response.blob())
+            .then(blob => createImageBitmap(blob))
+            .then(bitmap => {
+                tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1 + "";
+                minX = Math.min(minX, bitmap.width);
+                maxX = Math.max(maxX, bitmap.width);
+                minY = Math.min(minY, bitmap.height);
+                maxY = Math.max(maxY, bitmap.height);
+                sumX += bitmap.width;
+                sumY += bitmap.height;
 
-            if (++loaded === imagesList.children.length) {
-                stitchImages();
-            }
-        })
-        .catch(error => {
-            showError(`${error.message} File: ${fileName}`);
-        });
+                if (++loaded === imagesList.children.length) {
+                    stitchImages();
+                }
+            })
+            .catch(error => {
+                showError(`${error.message} File: ${fileName}`);
+            });
     });
 });
