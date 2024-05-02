@@ -60,6 +60,7 @@ tr {
 
 /* Media queries */
 @media screen and (min-width: 640px) {
+
     /* Adjust layout for small screens */
     .flex {
         flex-direction: column;
@@ -81,6 +82,7 @@ tr {
 }
 
 @media screen and (min-width: 768px) {
+
     /* Adjust layout for tablets */
     .flex {
         flex-direction: row;
@@ -102,6 +104,7 @@ tr {
 }
 
 @media screen and (min-width: 1024px) {
+
     /* Adjust layout for desktops */
     .flex {
         max-width: 1024px;
@@ -121,6 +124,10 @@ tr {
     background-color: var(--table-background);
 }
 
+.dropzone {
+    border-radius: 1rem;
+}
+
 .dropzone-text {
     font-size: 1.5rem;
     color: var(--dropzone-text);
@@ -134,6 +141,7 @@ tr {
 
 .dropzone:hover {
     border-color: var(--dropzone-hover);
+    cursor: pointer;
 }
 
 .dropzone:hover .dropzone-text,
