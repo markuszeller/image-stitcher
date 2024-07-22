@@ -1,4 +1,4 @@
-const Event = {
+const EventName = {
     click     : 'click',
     change    : 'change',
     input     : 'input',
@@ -77,7 +77,6 @@ const handleDragStart = (element, isDrag = true) => {
     }
 };
 
-
 const handleDragEnd = element => {
     element.classList.remove(CssClass.dragOver);
     element.style.opacity = '1';  // Reset opacity
@@ -111,13 +110,13 @@ const handleElementMove = (targetElement, isDrag = false) => {
 };
 
 const addEventListeners = () => {
-    Element.dialog.addEventListener(Event.click, () => {
+    Element.dialog.addEventListener(EventName.click, () => {
         clearTimeout(dialogTimeout);
         dialogTimeout = 0;
         Element.dialog.close();
     });
 
-    document.addEventListener(Event.touchStart, e => {
+    document.addEventListener(EventName.touchStart, e => {
         const targetElement = getTouchTargetElement(e);
         if (targetElement && targetElement.tagName === Text.tableRowTag) {
             e.preventDefault();
@@ -125,21 +124,21 @@ const addEventListeners = () => {
         }
     });
 
-    document.addEventListener(Event.touchMove, e => {
+    document.addEventListener(EventName.touchMove, e => {
         if (dragState) {
             e.preventDefault();
             handleElementMove(getTouchTargetElement(e));
         }
     });
 
-    document.addEventListener(Event.touchEnd, e => {
+    document.addEventListener(EventName.touchEnd, e => {
         if (dragState) {
             e.preventDefault();
             handleDragEnd(dragSource);
         }
     });
 
-    Element.saveButton.addEventListener(Event.click, () => {
+    Element.saveButton.addEventListener(EventName.click, () => {
         const canvas = Element.result.querySelector(Selector.canvas);
         if (canvas) {
             const link    = document.createElement('a');
@@ -149,7 +148,7 @@ const addEventListeners = () => {
         }
     });
 
-    Element.zoomSlider.addEventListener(Event.input, () => {
+    Element.zoomSlider.addEventListener(EventName.input, () => {
         const zoomLevel               = Element.zoomSlider.value;
         Element.zoomValue.textContent = `${zoomLevel}%`;
         const canvas                  = Element.result.querySelector(Selector.canvas);
@@ -157,7 +156,7 @@ const addEventListeners = () => {
         canvas.style.height           = `${canvas.height * zoomLevel / 100}px`;
     });
 
-    Element.themeSelector.addEventListener(Event.change, () => {
+    Element.themeSelector.addEventListener(EventName.change, () => {
         const value = Element.themeSelector.value;
         document.body.setAttribute(Attribute.dataTheme, value);
         if (themes.includes(value)) {
@@ -165,24 +164,24 @@ const addEventListeners = () => {
         }
     });
 
-    Element.fileDrop.addEventListener(Event.drop, handleFileDrop);
-    Element.fileDrop.addEventListener(Event.dragLeave, e => {
+    Element.fileDrop.addEventListener(EventName.drop, handleFileDrop);
+    Element.fileDrop.addEventListener(EventName.dragLeave, e => {
         e.preventDefault();
         Element.fileDrop.classList.remove(CssClass.dragOver);
     });
-    Element.fileDrop.addEventListener(Event.dragOver, e => {
+    Element.fileDrop.addEventListener(EventName.dragOver, e => {
         e.preventDefault();
         if (!dragState) Element.fileDrop.classList.add(CssClass.dragOver);
     });
 
-    Element.clearButton.addEventListener(Event.click, clearImages);
-    Element.clearButton.addEventListener(Event.dragOver, e => e.preventDefault());
-    Element.clearButton.addEventListener(Event.drop, () => {
+    Element.clearButton.addEventListener(EventName.click, clearImages);
+    Element.clearButton.addEventListener(EventName.dragOver, e => e.preventDefault());
+    Element.clearButton.addEventListener(EventName.drop, () => {
         Element.clearButton.classList.remove(CssClass.dragOver);
         if (dragSource) Element.imagesList.removeChild(dragSource);
     });
 
-    Element.stitchButton.addEventListener(Event.click, stitchImages);
+    Element.stitchButton.addEventListener(EventName.click, stitchImages);
 };
 
 const handleFileDrop = e => {
@@ -212,26 +211,26 @@ const handleFileDrop = e => {
         tr.appendChild(tdThumb);
         tr.appendChild(tdName);
 
-        tr.addEventListener(Event.dragOver, (e) => {
+        tr.addEventListener(EventName.dragOver, (e) => {
             e.preventDefault();
             e.stopPropagation();
             handleElementMove(tr, true);
         });
-        tr.addEventListener(Event.dragStart, (e) => {
+        tr.addEventListener(EventName.dragStart, (e) => {
             e.dataTransfer.setData('text/plain', '');
             handleDragStart(tr);
         });
-        tr.addEventListener(Event.dragEnd, () => handleDragEnd(tr));
-        tr.addEventListener(Event.drop, () => handleElementMove(tr, true));
-        tr.addEventListener(Event.touchStart, (e) => {
+        tr.addEventListener(EventName.dragEnd, () => handleDragEnd(tr));
+        tr.addEventListener(EventName.drop, () => handleElementMove(tr, true));
+        tr.addEventListener(EventName.touchStart, (e) => {
             e.preventDefault();
             handleDragStart(tr, false);
         });
-        tr.addEventListener(Event.touchEnd, (e) => {
+        tr.addEventListener(EventName.touchEnd, (e) => {
             e.preventDefault();
             handleDragEnd(tr);
         });
-        tr.addEventListener(Event.touchMove, e => {
+        tr.addEventListener(EventName.touchMove, e => {
             e.preventDefault();
             if (dragState) {
                 const touchLocation = e.targetTouches[0];
@@ -312,6 +311,6 @@ const stitchImages = e => {
 };
 
 Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
-Element.themeSelector.dispatchEvent(new Event(Event.change));
+Element.themeSelector.dispatchEvent(new Event(EventName.change));
 
 addEventListeners();
