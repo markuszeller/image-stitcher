@@ -172,12 +172,21 @@ const handleFileDrop = e => {
         }
 
         const tr = document.createElement(CONSTANTS.TABLE_ROW_TAG);
-        const td = document.createElement(CONSTANTS.TABLE_DATA_TAG);
+        const tdThumb = document.createElement(CONSTANTS.TABLE_DATA_TAG);
+        const tdName = document.createElement(CONSTANTS.TABLE_DATA_TAG);
+
         tr.setAttribute(ATTRIBUTES.DRAGGABLE, CONSTANTS.TRUE_TEXT);
         tr.setAttribute(ATTRIBUTES.DATA_FILE, URL.createObjectURL(file));
         tr.setAttribute(ATTRIBUTES.DATA_NAME, file.name);
-        td.textContent = `${CONSTANTS.IMAGE_SYMBOL} ${file.name}`;
-        tr.appendChild(td);
+
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'thumbnail';
+        tdThumb.appendChild(img);
+
+        tdName.textContent = `${CONSTANTS.IMAGE_SYMBOL} ${file.name}`;
+        tr.appendChild(tdThumb);
+        tr.appendChild(tdName);
 
         tr.addEventListener(EVENTS.DRAGOVER, e => e.preventDefault());
         tr.addEventListener(EVENTS.DRAGSTART, () => handleDragStart(tr));
