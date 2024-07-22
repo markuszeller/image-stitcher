@@ -69,26 +69,45 @@ const showError = message => {
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 
 const handleDragStart = (element, isDrag = true) => {
-    element.classList.add(CSS_CLASSES.DRAG_OVER);
-    elements.clearButton.classList.add(CSS_CLASSES.DRAG_OVER);
     dragState = true;
     dragSource = element;
-    if (isDrag) element.classList.add(CSS_CLASSES.DRAG_OVER);
+    if (isDrag) {
+        element.classList.add(CSS_CLASSES.DRAG_OVER);
+        element.style.opacity = '0.5';  // Visual feedback
+    }
 };
+
 
 const handleDragEnd = element => {
     element.classList.remove(CSS_CLASSES.DRAG_OVER);
+    element.style.opacity = '1';  // Reset opacity
     elements.clearButton.classList.remove(CSS_CLASSES.DRAG_OVER);
+    const indicator = elements.imagesList.querySelector('.drag-indicator');
+    if (indicator) {
+        if (indicator !== element && indicator !== element.nextSibling) {
+            elements.imagesList.insertBefore(element, indicator);
+        }
+        indicator.classList.remove('drag-indicator');
+    }
     dragState = false;
     dragSource = null;
 };
 
 const handleElementMove = (targetElement, isDrag = false) => {
-    if (!targetElement || targetElement.tagName !== CONSTANTS.TABLE_ROW_TAG) return;
-    (dragSource.getBoundingClientRect().top > targetElement.getBoundingClientRect().top)
-        ? targetElement.before(dragSource)
-        : targetElement.after(dragSource);
-    if (!isDrag) dragSource = null;
+    if (!targetElement || targetElement.tagName !== CONSTANTS.TABLE_ROW_TAG || !dragSource) return;
+    if (targetElement !== dragSource) {
+        const rect = targetElement.getBoundingClientRect();
+        const dragRect = dragSource.getBoundingClientRect();
+        const next = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
+        elements.imagesList.querySelectorAll('.drag-indicator').forEach(el => el.classList.remove('drag-indicator'));
+        if (next !== dragSource && next !== dragSource.nextElementSibling) {
+            if (next) {
+                next.classList.add('drag-indicator');
+            } else {
+                elements.imagesList.lastElementChild.classList.add('drag-indicator');
+            }
+        }
+    }
 };
 
 const addEventListeners = () => {
@@ -99,20 +118,25 @@ const addEventListeners = () => {
     });
 
     document.addEventListener(EVENTS.TOUCHSTART, e => {
-        e.preventDefault();
         const targetElement = getTouchTargetElement(e);
         if (targetElement && targetElement.tagName === CONSTANTS.TABLE_ROW_TAG) {
+            e.preventDefault();
             handleDragStart(targetElement, false);
         }
     });
 
     document.addEventListener(EVENTS.TOUCHMOVE, e => {
-        e.preventDefault();
-        if (dragState) handleElementMove(getTouchTargetElement(e));
+        if (dragState) {
+            e.preventDefault();
+            handleElementMove(getTouchTargetElement(e));
+        }
     });
 
-    document.addEventListener(EVENTS.TOUCHEND, () => {
-        if (dragState) handleDragEnd(dragSource);
+    document.addEventListener(EVENTS.TOUCHEND, e => {
+        if (dragState) {
+            e.preventDefault();
+            handleDragEnd(dragSource);
+        }
     });
 
     elements.saveButton.addEventListener(EVENTS.CLICK, () => {
@@ -188,17 +212,33 @@ const handleFileDrop = e => {
         tr.appendChild(tdThumb);
         tr.appendChild(tdName);
 
-        tr.addEventListener(EVENTS.DRAGOVER, e => e.preventDefault());
-        tr.addEventListener(EVENTS.DRAGSTART, () => handleDragStart(tr));
+        tr.addEventListener(EVENTS.DRAGOVER, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleElementMove(tr, true);
+        });
+        tr.addEventListener(EVENTS.DRAGSTART, (e) => {
+            e.dataTransfer.setData('text/plain', '');
+            handleDragStart(tr);
+        });
         tr.addEventListener(EVENTS.DRAGEND, () => handleDragEnd(tr));
         tr.addEventListener(EVENTS.DROP, () => handleElementMove(tr, true));
-        tr.addEventListener(EVENTS.TOUCHSTART, () => handleDragStart(tr, false));
-        tr.addEventListener(EVENTS.TOUCHEND, () => handleDragEnd(tr));
+        tr.addEventListener(EVENTS.TOUCHSTART, (e) => {
+            e.preventDefault();
+            handleDragStart(tr, false);
+        });
+        tr.addEventListener(EVENTS.TOUCHEND, (e) => {
+            e.preventDefault();
+            handleDragEnd(tr);
+        });
         tr.addEventListener(EVENTS.TOUCHMOVE, e => {
             e.preventDefault();
-            if (dragState) handleElementMove(document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY));
+            if (dragState) {
+                const touchLocation = e.targetTouches[0];
+                const targetElement = document.elementFromPoint(touchLocation.clientX, touchLocation.clientY);
+                handleElementMove(targetElement);
+            }
         });
-
         elements.imagesList.appendChild(tr);
     });
 };

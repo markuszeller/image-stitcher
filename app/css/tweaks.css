@@ -163,3 +163,7 @@ dialog::backdrop {
 #images-list td {
     vertical-align: middle;
 }
+
+.drag-indicator {
+    border-top: 2px solid #007bff;
+}
