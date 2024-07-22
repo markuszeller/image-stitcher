@@ -79,7 +79,7 @@ const handleDragStart = (element, isDrag = true) => {
 
 const handleDragEnd = element => {
     element.classList.remove(CssClass.dragOver);
-    element.style.opacity = '1';  // Reset opacity
+    element.style.opacity = 1;
     Element.clearButton.classList.remove(CssClass.dragOver);
     const indicator = Element.imagesList.querySelector('.drag-indicator');
     if (indicator) {
