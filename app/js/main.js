@@ -25,7 +25,8 @@ const Selector = {
 };
 
 const CssClass = {
-    dragOver: 'drag-over'
+    dragOver: 'drag-over',
+    dragIndicator: 'drag-indicator'
 };
 
 const Text = {
@@ -81,12 +82,12 @@ const handleDragEnd = element => {
     element.classList.remove(CssClass.dragOver);
     element.style.opacity = 1;
     Element.clearButton.classList.remove(CssClass.dragOver);
-    const indicator = Element.imagesList.querySelector('.drag-indicator');
+    const indicator = Element.imagesList.querySelector('.' + CssClass.dragIndicator);
     if (indicator) {
         if (indicator !== element && indicator !== element.nextSibling) {
             Element.imagesList.insertBefore(element, indicator);
         }
-        indicator.classList.remove('drag-indicator');
+        indicator.classList.remove(CssClass.dragIndicator);
     }
     dragState  = false;
     dragSource = null;
@@ -98,12 +99,13 @@ const handleElementMove = (targetElement, isDrag = false) => {
         const rect     = targetElement.getBoundingClientRect();
         const dragRect = dragSource.getBoundingClientRect();
         const next     = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
-        Element.imagesList.querySelectorAll('.drag-indicator').forEach(el => el.classList.remove('drag-indicator'));
+        Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
+            .forEach(el => el.classList.remove(CssClass.dragIndicator));
         if (next !== dragSource && next !== dragSource.nextElementSibling) {
             if (next) {
-                next.classList.add('drag-indicator');
+                next.classList.add(CssClass.dragIndicator);
             } else {
-                Element.imagesList.lastElementChild.classList.add('drag-indicator');
+                Element.imagesList.lastElementChild.classList.add(CssClass.dragIndicator);
             }
         }
     }
