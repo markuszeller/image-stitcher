@@ -94,7 +94,7 @@ const handleDragEnd = element => {
 };
 
 const handleElementMove = (targetElement, isDrag = false) => {
-    if (!targetElement || targetElement.tagName !== Text.tableRowTag || !dragSource) return;
+    if (!targetElement || targetElement.tagName.toLowerCase() !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
         const rect     = targetElement.getBoundingClientRect();
         const dragRect = dragSource.getBoundingClientRect();
