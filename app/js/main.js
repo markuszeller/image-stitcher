@@ -1,237 +1,237 @@
-const EVENTS = {
-    CLICK: 'click',
-    CHANGE: 'change',
-    INPUT: 'input',
-    DROP: 'drop',
-    DRAGEND: 'dragend',
-    DRAGLEAVE: 'dragleave',
-    DRAGOVER: 'dragover',
-    DRAGSTART: 'dragstart',
-    TOUCHSTART: 'touchstart',
-    TOUCHMOVE: 'touchmove',
-    TOUCHEND: 'touchend'
+const Event = {
+    click     : 'click',
+    change    : 'change',
+    input     : 'input',
+    drop      : 'drop',
+    dragEnd   : 'dragend',
+    dragLeave : 'dragleave',
+    dragOver  : 'dragover',
+    dragStart : 'dragstart',
+    touchStart: 'touchstart',
+    touchMove : 'touchmove',
+    touchEnd  : 'touchend'
 };
 
-const ATTRIBUTES = {
-    DRAGGABLE: 'draggable',
-    DATA_FILE: 'data-file',
-    DATA_NAME: 'data-name',
-    DATA_THEME: 'data-theme'
+const Attribute = {
+    draggable: 'draggable',
+    dataFile : 'data-file',
+    dataName : 'data-name',
+    dataTheme: 'data-theme'
 };
 
-const SELECTORS = {
-    MODE: 'input[name=mode]:checked',
-    CANVAS: 'canvas'
+const Selector = {
+    mode  : 'input[name=mode]:checked',
+    canvas: 'canvas'
 };
 
-const CSS_CLASSES = {
-    DRAG_OVER: 'drag-over'
+const CssClass = {
+    dragOver: 'drag-over'
 };
 
-const CONSTANTS = {
-    TRUE_TEXT: 'true',
-    TABLE_ROW_TAG: 'tr',
-    TABLE_DATA_TAG: 'td',
-    IMAGE_MIME_TYPE_PATTERN: /^image\//,
-    IMAGE_SYMBOL: '🎨',
-    CANVAS_CONTEXT: '2d',
-    HORIZONTAL_MODE: 'horizontal',
-    MODAL_CLOSE_TIMEOUT_MS: 4000
+const Text = {
+    trueValue           : 'true',
+    tableRowTag         : 'tr',
+    tableDataTag        : 'td',
+    imageMimeTypePattern: /^image\//,
+    imageSymbol         : '🎨',
+    canvasContext       : '2d',
+    horizontalMode      : 'horizontal',
+    modalCloseTimeout   : 4000
 };
 
-const elements = {
-    fileDrop: document.getElementById('files'),
-    imagesList: document.getElementById('images-list'),
-    clearButton: document.getElementById('clear-button'),
-    stitchButton: document.getElementById('stitch-button'),
-    saveButton: document.getElementById('save-button'),
-    result: document.getElementById('result'),
+const Element = {
+    fileDrop          : document.getElementById('files'),
+    imagesList        : document.getElementById('images-list'),
+    clearButton       : document.getElementById('clear-button'),
+    stitchButton      : document.getElementById('stitch-button'),
+    saveButton        : document.getElementById('save-button'),
+    result            : document.getElementById('result'),
     keepAspectCheckbox: document.getElementById('keep-aspect'),
-    zoomSlider: document.getElementById('zoom-slider'),
-    zoomValue: document.getElementById('zoom-value'),
-    themeSelector: document.getElementById('theme-select'),
-    dialog: document.getElementById('error-modal'),
-    errorMessage: document.getElementById('error-modal').querySelector('.error-message')
+    zoomSlider        : document.getElementById('zoom-slider'),
+    zoomValue         : document.getElementById('zoom-value'),
+    themeSelector     : document.getElementById('theme-select'),
+    dialog            : document.getElementById('error-modal'),
+    errorMessage      : document.getElementById('error-modal').querySelector('.error-message')
 };
 
-const themes = [...elements.themeSelector.querySelectorAll('option')].map(option => option.value);
+const themes = [...Element.themeSelector.querySelectorAll('option')].map(option => option.value);
 
 let dialogTimeout = 0;
-let dragState = false;
-let dragSource = null;
+let dragState     = false;
+let dragSource    = null;
 
 const showError = message => {
-    elements.errorMessage.textContent = message;
-    elements.dialog.showModal();
-    dialogTimeout = window.setTimeout(() => elements.dialog.close(), CONSTANTS.MODAL_CLOSE_TIMEOUT_MS);
+    Element.errorMessage.textContent = message;
+    Element.dialog.showModal();
+    dialogTimeout = window.setTimeout(() => Element.dialog.close(), Text.modalCloseTimeout);
 };
 
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 
 const handleDragStart = (element, isDrag = true) => {
-    dragState = true;
+    dragState  = true;
     dragSource = element;
     if (isDrag) {
-        element.classList.add(CSS_CLASSES.DRAG_OVER);
+        element.classList.add(CssClass.dragOver);
         element.style.opacity = '0.5';  // Visual feedback
     }
 };
 
 
 const handleDragEnd = element => {
-    element.classList.remove(CSS_CLASSES.DRAG_OVER);
+    element.classList.remove(CssClass.dragOver);
     element.style.opacity = '1';  // Reset opacity
-    elements.clearButton.classList.remove(CSS_CLASSES.DRAG_OVER);
-    const indicator = elements.imagesList.querySelector('.drag-indicator');
+    Element.clearButton.classList.remove(CssClass.dragOver);
+    const indicator = Element.imagesList.querySelector('.drag-indicator');
     if (indicator) {
         if (indicator !== element && indicator !== element.nextSibling) {
-            elements.imagesList.insertBefore(element, indicator);
+            Element.imagesList.insertBefore(element, indicator);
         }
         indicator.classList.remove('drag-indicator');
     }
-    dragState = false;
+    dragState  = false;
     dragSource = null;
 };
 
 const handleElementMove = (targetElement, isDrag = false) => {
-    if (!targetElement || targetElement.tagName !== CONSTANTS.TABLE_ROW_TAG || !dragSource) return;
+    if (!targetElement || targetElement.tagName !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
-        const rect = targetElement.getBoundingClientRect();
+        const rect     = targetElement.getBoundingClientRect();
         const dragRect = dragSource.getBoundingClientRect();
-        const next = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
-        elements.imagesList.querySelectorAll('.drag-indicator').forEach(el => el.classList.remove('drag-indicator'));
+        const next     = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
+        Element.imagesList.querySelectorAll('.drag-indicator').forEach(el => el.classList.remove('drag-indicator'));
         if (next !== dragSource && next !== dragSource.nextElementSibling) {
             if (next) {
                 next.classList.add('drag-indicator');
             } else {
-                elements.imagesList.lastElementChild.classList.add('drag-indicator');
+                Element.imagesList.lastElementChild.classList.add('drag-indicator');
             }
         }
     }
 };
 
 const addEventListeners = () => {
-    elements.dialog.addEventListener(EVENTS.CLICK, () => {
+    Element.dialog.addEventListener(Event.click, () => {
         clearTimeout(dialogTimeout);
         dialogTimeout = 0;
-        elements.dialog.close();
+        Element.dialog.close();
     });
 
-    document.addEventListener(EVENTS.TOUCHSTART, e => {
+    document.addEventListener(Event.touchStart, e => {
         const targetElement = getTouchTargetElement(e);
-        if (targetElement && targetElement.tagName === CONSTANTS.TABLE_ROW_TAG) {
+        if (targetElement && targetElement.tagName === Text.tableRowTag) {
             e.preventDefault();
             handleDragStart(targetElement, false);
         }
     });
 
-    document.addEventListener(EVENTS.TOUCHMOVE, e => {
+    document.addEventListener(Event.touchMove, e => {
         if (dragState) {
             e.preventDefault();
             handleElementMove(getTouchTargetElement(e));
         }
     });
 
-    document.addEventListener(EVENTS.TOUCHEND, e => {
+    document.addEventListener(Event.touchEnd, e => {
         if (dragState) {
             e.preventDefault();
             handleDragEnd(dragSource);
         }
     });
 
-    elements.saveButton.addEventListener(EVENTS.CLICK, () => {
-        const canvas = elements.result.querySelector(SELECTORS.CANVAS);
+    Element.saveButton.addEventListener(Event.click, () => {
+        const canvas = Element.result.querySelector(Selector.canvas);
         if (canvas) {
-            const link = document.createElement('a');
+            const link    = document.createElement('a');
             link.download = 'stitched-image.png';
-            link.href = canvas.toDataURL();
+            link.href     = canvas.toDataURL();
             link.click();
         }
     });
 
-    elements.zoomSlider.addEventListener(EVENTS.INPUT, () => {
-        const zoomLevel = elements.zoomSlider.value;
-        elements.zoomValue.textContent = `${zoomLevel}%`;
-        const canvas = elements.result.querySelector(SELECTORS.CANVAS);
-        canvas.style.width = `${canvas.width * zoomLevel / 100}px`;
-        canvas.style.height = `${canvas.height * zoomLevel / 100}px`;
+    Element.zoomSlider.addEventListener(Event.input, () => {
+        const zoomLevel               = Element.zoomSlider.value;
+        Element.zoomValue.textContent = `${zoomLevel}%`;
+        const canvas                  = Element.result.querySelector(Selector.canvas);
+        canvas.style.width            = `${canvas.width * zoomLevel / 100}px`;
+        canvas.style.height           = `${canvas.height * zoomLevel / 100}px`;
     });
 
-    elements.themeSelector.addEventListener(EVENTS.CHANGE, () => {
-        const value = elements.themeSelector.value;
-        document.body.setAttribute(ATTRIBUTES.DATA_THEME, value);
+    Element.themeSelector.addEventListener(Event.change, () => {
+        const value = Element.themeSelector.value;
+        document.body.setAttribute(Attribute.dataTheme, value);
         if (themes.includes(value)) {
             localStorage.setItem('theme', value);
         }
     });
 
-    elements.fileDrop.addEventListener(EVENTS.DROP, handleFileDrop);
-    elements.fileDrop.addEventListener(EVENTS.DRAGLEAVE, e => {
+    Element.fileDrop.addEventListener(Event.drop, handleFileDrop);
+    Element.fileDrop.addEventListener(Event.dragLeave, e => {
         e.preventDefault();
-        elements.fileDrop.classList.remove(CSS_CLASSES.DRAG_OVER);
+        Element.fileDrop.classList.remove(CssClass.dragOver);
     });
-    elements.fileDrop.addEventListener(EVENTS.DRAGOVER, e => {
+    Element.fileDrop.addEventListener(Event.dragOver, e => {
         e.preventDefault();
-        if (!dragState) elements.fileDrop.classList.add(CSS_CLASSES.DRAG_OVER);
+        if (!dragState) Element.fileDrop.classList.add(CssClass.dragOver);
     });
 
-    elements.clearButton.addEventListener(EVENTS.CLICK, clearImages);
-    elements.clearButton.addEventListener(EVENTS.DRAGOVER, e => e.preventDefault());
-    elements.clearButton.addEventListener(EVENTS.DROP, () => {
-        elements.clearButton.classList.remove(CSS_CLASSES.DRAG_OVER);
-        if (dragSource) elements.imagesList.removeChild(dragSource);
+    Element.clearButton.addEventListener(Event.click, clearImages);
+    Element.clearButton.addEventListener(Event.dragOver, e => e.preventDefault());
+    Element.clearButton.addEventListener(Event.drop, () => {
+        Element.clearButton.classList.remove(CssClass.dragOver);
+        if (dragSource) Element.imagesList.removeChild(dragSource);
     });
 
-    elements.stitchButton.addEventListener(EVENTS.CLICK, stitchImages);
+    Element.stitchButton.addEventListener(Event.click, stitchImages);
 };
 
 const handleFileDrop = e => {
     e.preventDefault();
     dragState = false;
-    elements.fileDrop.classList.remove(CSS_CLASSES.DRAG_OVER);
+    Element.fileDrop.classList.remove(CssClass.dragOver);
 
     [...e.dataTransfer.files].forEach(file => {
-        if (!file.type.match(CONSTANTS.IMAGE_MIME_TYPE_PATTERN)) {
+        if (!file.type.match(Text.imageMimeTypePattern)) {
             return showError(`Invalid file type. Only image files are allowed. File: ${file.name}`);
         }
 
-        const tr = document.createElement(CONSTANTS.TABLE_ROW_TAG);
-        const tdThumb = document.createElement(CONSTANTS.TABLE_DATA_TAG);
-        const tdName = document.createElement(CONSTANTS.TABLE_DATA_TAG);
+        const tr      = document.createElement(Text.tableRowTag);
+        const tdThumb = document.createElement(Text.tableDataTag);
+        const tdName  = document.createElement(Text.tableDataTag);
 
-        tr.setAttribute(ATTRIBUTES.DRAGGABLE, CONSTANTS.TRUE_TEXT);
-        tr.setAttribute(ATTRIBUTES.DATA_FILE, URL.createObjectURL(file));
-        tr.setAttribute(ATTRIBUTES.DATA_NAME, file.name);
+        tr.setAttribute(Attribute.draggable, Text.trueValue);
+        tr.setAttribute(Attribute.dataFile, URL.createObjectURL(file));
+        tr.setAttribute(Attribute.dataName, file.name);
 
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
+        const img     = document.createElement('img');
+        img.src       = URL.createObjectURL(file);
         img.className = 'thumbnail';
         tdThumb.appendChild(img);
 
-        tdName.textContent = `${CONSTANTS.IMAGE_SYMBOL} ${file.name}`;
+        tdName.textContent = `${Text.imageSymbol} ${file.name}`;
         tr.appendChild(tdThumb);
         tr.appendChild(tdName);
 
-        tr.addEventListener(EVENTS.DRAGOVER, (e) => {
+        tr.addEventListener(Event.dragOver, (e) => {
             e.preventDefault();
             e.stopPropagation();
             handleElementMove(tr, true);
         });
-        tr.addEventListener(EVENTS.DRAGSTART, (e) => {
+        tr.addEventListener(Event.dragStart, (e) => {
             e.dataTransfer.setData('text/plain', '');
             handleDragStart(tr);
         });
-        tr.addEventListener(EVENTS.DRAGEND, () => handleDragEnd(tr));
-        tr.addEventListener(EVENTS.DROP, () => handleElementMove(tr, true));
-        tr.addEventListener(EVENTS.TOUCHSTART, (e) => {
+        tr.addEventListener(Event.dragEnd, () => handleDragEnd(tr));
+        tr.addEventListener(Event.drop, () => handleElementMove(tr, true));
+        tr.addEventListener(Event.touchStart, (e) => {
             e.preventDefault();
             handleDragStart(tr, false);
         });
-        tr.addEventListener(EVENTS.TOUCHEND, (e) => {
+        tr.addEventListener(Event.touchEnd, (e) => {
             e.preventDefault();
             handleDragEnd(tr);
         });
-        tr.addEventListener(EVENTS.TOUCHMOVE, e => {
+        tr.addEventListener(Event.touchMove, e => {
             e.preventDefault();
             if (dragState) {
                 const touchLocation = e.targetTouches[0];
@@ -239,71 +239,71 @@ const handleFileDrop = e => {
                 handleElementMove(targetElement);
             }
         });
-        elements.imagesList.appendChild(tr);
+        Element.imagesList.appendChild(tr);
     });
 };
 
 const clearImages = () => {
-    while (elements.imagesList.firstChild) {
-        elements.imagesList.removeChild(elements.imagesList.firstChild);
+    while (Element.imagesList.firstChild) {
+        Element.imagesList.removeChild(Element.imagesList.firstChild);
     }
-    const canvas = elements.result.querySelector(SELECTORS.CANVAS);
-    if (canvas) elements.result.removeChild(canvas);
-    elements.zoomSlider.value = 100;
-    elements.zoomValue.textContent = '100%';
-    elements.saveButton.disabled = true;
+    const canvas = Element.result.querySelector(Selector.canvas);
+    if (canvas) Element.result.removeChild(canvas);
+    Element.zoomSlider.value      = 100;
+    Element.zoomValue.textContent = '100%';
+    Element.saveButton.disabled   = true;
 };
 
 const stitchImages = e => {
     e.preventDefault();
-    elements.zoomSlider.value = 100;
-    elements.zoomValue.textContent = '100%';
-    const canvas = elements.result.querySelector(SELECTORS.CANVAS);
-    if (canvas) elements.result.removeChild(canvas);
+    Element.zoomSlider.value      = 100;
+    Element.zoomValue.textContent = '100%';
+    const canvas                  = Element.result.querySelector(Selector.canvas);
+    if (canvas) Element.result.removeChild(canvas);
 
-    let minX = 0, maxX = 0, minY = 0, maxY = 0, sumX = 0, sumY = 0, loaded = 0;
+    let minX      = 0, maxX = 0, minY = 0, maxY = 0, sumX = 0, sumY = 0, loaded = 0;
     const bitmaps = [];
 
     const stitchImagesOnCanvas = () => {
-        const isHorizontalMode = document.querySelector(SELECTORS.MODE).value === CONSTANTS.HORIZONTAL_MODE;
-        const canvas = document.createElement(SELECTORS.CANVAS);
-        canvas.width = isHorizontalMode ? sumX : maxX;
-        canvas.style.maxWidth = isHorizontalMode ? '100%' : `${canvas.width}px`;
-        canvas.height = isHorizontalMode ? maxY : sumY;
+        const isHorizontalMode = document.querySelector(Selector.mode).value === Text.horizontalMode;
+        const canvas           = document.createElement(Selector.canvas);
+        canvas.width           = isHorizontalMode ? sumX : maxX;
+        canvas.style.maxWidth  = isHorizontalMode ? '100%' : `${canvas.width}px`;
+        canvas.height          = isHorizontalMode ? maxY : sumY;
         canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : '50vh';
 
-        const ctx = canvas.getContext(CONSTANTS.CANVAS_CONTEXT);
-        let x = 0, y = 0;
+        const ctx = canvas.getContext(Text.canvasContext);
+        let x     = 0, y = 0;
 
-        [...elements.imagesList.children].forEach(tr => {
+        [...Element.imagesList.children].forEach(tr => {
             const bitmap = bitmaps[tr.dataset.bitmapIndex];
-            const width = elements.keepAspectCheckbox.checked ? (isHorizontalMode ? bitmap.width : canvas.width) : bitmap.width;
-            const height = elements.keepAspectCheckbox.checked ? (isHorizontalMode ? canvas.height : bitmap.height) : bitmap.height;
+            const width  = Element.keepAspectCheckbox.checked ? (isHorizontalMode ? bitmap.width : canvas.width) : bitmap.width;
+            const height = Element.keepAspectCheckbox.checked ? (isHorizontalMode ? canvas.height : bitmap.height) : bitmap.height;
 
             ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, width, height);
             x += isHorizontalMode ? width : 0;
             y += isHorizontalMode ? 0 : height;
         });
 
-        elements.result.appendChild(canvas);
-        elements.saveButton.disabled = false;
+        Element.result.appendChild(canvas);
+        Element.saveButton.disabled = false;
     };
 
-    [...elements.imagesList.children].forEach(tr => {
+    [...Element.imagesList.children].forEach(tr => {
         const fileName = tr.dataset.name;
         fetch(tr.dataset.file)
             .then(response => response.blob())
             .then(createImageBitmap)
             .then(bitmap => {
                 tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1;
-                minX = Math.min(minX, bitmap.width);
-                maxX = Math.max(maxX, bitmap.width);
-                minY = Math.min(minY, bitmap.height);
-                maxY = Math.max(maxY, bitmap.height);
+                minX                   = Math.min(minX, bitmap.width);
+                maxX                   = Math.max(maxX, bitmap.width);
+                minY                   = Math.min(minY, bitmap.height);
+                maxY                   = Math.max(maxY, bitmap.height);
                 sumX += bitmap.width;
                 sumY += bitmap.height;
 
-                if (++loaded === elements.imagesList.children.length) {
+                if (++loaded === Element.imagesList.children.length) {
                     stitchImagesOnCanvas();
                 }
             })
@@ -311,7 +311,7 @@ const stitchImages = e => {
     });
 };
 
-elements.themeSelector.value = localStorage.getItem('theme') || themes[0];
-elements.themeSelector.dispatchEvent(new Event(EVENTS.CHANGE));
+Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
+Element.themeSelector.dispatchEvent(new Event(Event.change));
 
 addEventListeners();
