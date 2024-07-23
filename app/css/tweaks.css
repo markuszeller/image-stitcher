@@ -167,3 +167,17 @@ dialog::backdrop {
 .drag-indicator {
     border-top: 2px solid #007bff;
 }
+
+.image-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.image-menu button,
+.image-menu input {
+    display: block;
+    margin: 5px 0;
+}
