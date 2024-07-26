@@ -3,7 +3,7 @@ services:
     image: selenium/standalone-chrome
     ports:
       - "4444:4444" # grid
-      - "7900:7900" # VNC
+      - "7900:7900" # watch browser
   npm:
     image: node:22-alpine
     stdin_open: true

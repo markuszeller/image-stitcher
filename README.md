@@ -29,4 +29,5 @@ No server required. You can open the **index.html** in the browser.
 ## Development
 
 - run docker compose
-- Watch the selenium grid at [http://localhost:7900](http://localhost:7900/?autoconnect=1&resize=scale&password=secret)
+- Watch the selenium grid at [http://localhost:4444](http://localhost:4444)
+- Watch the selenium browser at [http://localhost:7900](http://localhost:7900/?autoconnect=1&resize=scale&password=secret)
