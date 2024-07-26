@@ -25,3 +25,8 @@ No data is stored or uploaded on the server. The whole script and image processi
 - If you like to switch the mode, do so and hit the **stitch** button, again.
 
 No server required. You can open the **index.html** in the browser.
+
+## Development
+
+- run docker compose
+- Watch the selenium grid at [http://localhost:7900](http://localhost:7900/?autoconnect=1&resize=scale&password=secret)
