@@ -85,10 +85,12 @@ const handleDragStart = (element, isDrag = true) => {
     }
 };
 
-const handleDragEnd = element => {
-    element.classList.remove(CssClass.dragOver);
-    element.style.opacity = MagicValues.opacityDefault;
-    Element.clearButton.classList.remove(CssClass.dragOver);
+const clearDragIndicators = () => {
+    Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
+        .forEach(el => el.classList.remove(CssClass.dragIndicator));
+};
+
+const moveElementToIndicatorPosition = element => {
     const indicator = Element.imagesList.querySelector('.' + CssClass.dragIndicator);
     if (indicator) {
         if (indicator !== element && indicator !== element.nextSibling) {
@@ -96,6 +98,13 @@ const handleDragEnd = element => {
         }
         indicator.classList.remove(CssClass.dragIndicator);
     }
+};
+
+const handleDragEnd = element => {
+    element.classList.remove(CssClass.dragOver);
+    element.style.opacity = MagicValues.opacityDefault;
+    Element.clearButton.classList.remove(CssClass.dragOver);
+    moveElementToIndicatorPosition(element);
     dragState  = false;
     dragSource = null;
 };
@@ -108,8 +117,7 @@ const handleElementMove = (targetElement, isDrag = false) => {
         const isAboveHalf = dragRect.top < rect.top + rect.height / 2;
         const next = isAboveHalf ? targetElement.nextElementSibling : targetElement;
 
-        Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
-            .forEach(el => el.classList.remove(CssClass.dragIndicator));
+        clearDragIndicators();
 
         const isNotDragSource = next !== dragSource;
         const isNotNextSibling = next !== dragSource.nextElementSibling;
