@@ -293,24 +293,32 @@ const stitchImages = e => {
     [...Element.imagesList.children].forEach(tr => {
         const fileName = tr.dataset.name;
         fetch(tr.dataset.file)
-            .then(response => response.blob())
-            .then(createImageBitmap)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network error (${response.status}): ${response.statusText}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                if (!blob.type.match(Text.imageMimeTypePattern)) {
+                    throw new Error('No valid image file');
+                }
+                return createImageBitmap(blob);
+            })
             .then(bitmap => {
                 tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1;
-                minX                   = Math.min(minX, bitmap.width);
-                maxX                   = Math.max(maxX, bitmap.width);
-                minY                   = Math.min(minY, bitmap.height);
-                maxY                   = Math.max(maxY, bitmap.height);
+                minX = Math.min(minX, bitmap.width);
+                maxX = Math.max(maxX, bitmap.width);
+                minY = Math.min(minY, bitmap.height);
+                maxY = Math.max(maxY, bitmap.height);
                 sumX += bitmap.width;
                 sumY += bitmap.height;
-
                 if (++loaded === Element.imagesList.children.length) {
                     stitchImagesOnCanvas();
                 }
             })
-            .catch(error => showError(`${error.message} File: ${fileName}`));
+            .catch(error => showError(`[${fileName}] ${error.message}`));
     });
-};
 
 Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
 Element.themeSelector.dispatchEvent(new Event(EventName.change));
