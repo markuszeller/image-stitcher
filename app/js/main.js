@@ -319,6 +319,7 @@ const stitchImages = e => {
             })
             .catch(error => showError(`[${fileName}] ${error.message}`));
     });
+};
 
 Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
 Element.themeSelector.dispatchEvent(new Event(EventName.change));
