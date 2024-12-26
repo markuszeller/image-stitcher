@@ -31,7 +31,11 @@ const CssClass = {
 
 const MagicValues = {
     opacityDragging: 0.5,
-    opacityDefault: 1
+    opacityDefault: 1,
+    zoomDefault: 100,
+    canvasMaxHeight: '50vh',
+    canvasContext: '2d',
+    modalCloseTimeout: 4000
 };
 
 const Text = {
@@ -40,9 +44,7 @@ const Text = {
     tableDataTag        : 'td',
     imageMimeTypePattern: /^image\//,
     imageSymbol         : '🎨',
-    canvasContext       : '2d',
-    horizontalMode      : 'horizontal',
-    modalCloseTimeout   : 4000
+    horizontalMode      : 'horizontal'
 };
 
 const Element = {
@@ -69,7 +71,7 @@ let dragSource    = null;
 const showError = message => {
     Element.errorMessage.textContent = message;
     Element.dialog.showModal();
-    dialogTimeout = window.setTimeout(() => Element.dialog.close(), Text.modalCloseTimeout);
+    dialogTimeout = window.setTimeout(() => Element.dialog.close(), MagicValues.modalCloseTimeout);
 };
 
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -255,15 +257,15 @@ const clearImages = () => {
     }
     const canvas = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
-    Element.zoomSlider.value      = 100;
-    Element.zoomValue.textContent = '100%';
+    Element.zoomSlider.value      = MagicValues.zoomDefault;
+    Element.zoomValue.textContent = `${MagicValues.zoomDefault}%`;
     Element.saveButton.disabled   = true;
 };
 
 const stitchImages = e => {
     e.preventDefault();
-    Element.zoomSlider.value      = 100;
-    Element.zoomValue.textContent = '100%';
+    Element.zoomSlider.value      = MagicValues.zoomDefault;
+    Element.zoomValue.textContent = `${MagicValues.zoomDefault}%`;
     const canvas                  = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
 
@@ -276,9 +278,9 @@ const stitchImages = e => {
         canvas.width           = isHorizontalMode ? sumX : maxX;
         canvas.style.maxWidth  = isHorizontalMode ? '100%' : `${canvas.width}px`;
         canvas.height          = isHorizontalMode ? maxY : sumY;
-        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : '50vh';
+        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : MagicValues.canvasMaxHeight;
 
-        const ctx = canvas.getContext(Text.canvasContext);
+        const ctx = canvas.getContext(MagicValues.canvasContext);
         let x     = 0, y = 0;
 
         [...Element.imagesList.children].forEach(tr => {
