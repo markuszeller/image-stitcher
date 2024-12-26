@@ -103,12 +103,18 @@ const handleDragEnd = element => {
 const handleElementMove = (targetElement, isDrag = false) => {
     if (!targetElement || targetElement.tagName.toLowerCase() !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
-        const rect     = targetElement.getBoundingClientRect();
+        const rect = targetElement.getBoundingClientRect();
         const dragRect = dragSource.getBoundingClientRect();
-        const next     = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
+        const isAboveHalf = dragRect.top < rect.top + rect.height / 2;
+        const next = isAboveHalf ? targetElement.nextElementSibling : targetElement;
+
         Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
             .forEach(el => el.classList.remove(CssClass.dragIndicator));
-        if (next !== dragSource && next !== dragSource.nextElementSibling) {
+
+        const isNotDragSource = next !== dragSource;
+        const isNotNextSibling = next !== dragSource.nextElementSibling;
+
+        if (isNotDragSource && isNotNextSibling) {
             if (next) {
                 next.classList.add(CssClass.dragIndicator);
             } else {
