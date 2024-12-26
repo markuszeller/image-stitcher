@@ -85,7 +85,7 @@ const handleDragStart = (element, isDrag = true) => {
 
 const handleDragEnd = element => {
     element.classList.remove(CssClass.dragOver);
-    element.style.opacity = 1;
+    element.style.opacity = MagicValues.opacityDefault;
     Element.clearButton.classList.remove(CssClass.dragOver);
     const indicator = Element.imagesList.querySelector('.' + CssClass.dragIndicator);
     if (indicator) {
