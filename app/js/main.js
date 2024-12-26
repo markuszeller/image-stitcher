@@ -74,7 +74,7 @@ const handleDragStart = (element, isDrag = true) => {
     dragSource = element;
     if (isDrag) {
         element.classList.add(CssClass.dragOver);
-        element.style.opacity = '0.5';  // Visual feedback
+        element.style.opacity = '0.5';
     }
 };
 
