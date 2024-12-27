@@ -68,10 +68,19 @@ let dialogTimeout = 0;
 let dragState     = false;
 let dragSource    = null;
 
+const UiConfig = {
+    opacityDragging: 0.5,
+    opacityDefault: 1,
+    zoomDefault: 100,
+    canvasMaxHeight: '50vh',
+    canvasContext: '2d',
+    modalCloseTimeout: 4000
+};
+
 const showError = message => {
     Element.errorMessage.textContent = message;
     Element.dialog.showModal();
-    dialogTimeout = window.setTimeout(() => Element.dialog.close(), MagicValues.modalCloseTimeout);
+    dialogTimeout = window.setTimeout(() => Element.dialog.close(), UiConfig.modalCloseTimeout);
 };
 
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -81,7 +90,7 @@ const handleDragStart = (element, isDrag = true) => {
     dragSource = element;
     if (isDrag) {
         element.classList.add(CssClass.dragOver);
-        element.style.opacity = MagicValues.opacityDragging;
+        element.style.opacity = UiConfig.opacityDragging;
     }
 };
 
@@ -102,7 +111,7 @@ const moveElementToIndicatorPosition = element => {
 
 const handleDragEnd = element => {
     element.classList.remove(CssClass.dragOver);
-    element.style.opacity = MagicValues.opacityDefault;
+    element.style.opacity = UiConfig.opacityDefault;
     Element.clearButton.classList.remove(CssClass.dragOver);
     moveElementToIndicatorPosition(element);
     dragState  = false;
@@ -271,15 +280,15 @@ const clearImages = () => {
     }
     const canvas = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
-    Element.zoomSlider.value      = MagicValues.zoomDefault;
-    Element.zoomValue.textContent = `${MagicValues.zoomDefault}%`;
+    Element.zoomSlider.value      = UiConfig.zoomDefault;
+    Element.zoomValue.textContent = `${UiConfig.zoomDefault}%`;
     Element.saveButton.disabled   = true;
 };
 
 const stitchImages = e => {
     e.preventDefault();
-    Element.zoomSlider.value      = MagicValues.zoomDefault;
-    Element.zoomValue.textContent = `${MagicValues.zoomDefault}%`;
+    Element.zoomSlider.value      = UiConfig.zoomDefault;
+    Element.zoomValue.textContent = `${UiConfig.zoomDefault}%`;
     const canvas                  = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
 
@@ -292,9 +301,9 @@ const stitchImages = e => {
         canvas.width           = isHorizontalMode ? sumX : maxX;
         canvas.style.maxWidth  = isHorizontalMode ? '100%' : `${canvas.width}px`;
         canvas.height          = isHorizontalMode ? maxY : sumY;
-        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : MagicValues.canvasMaxHeight;
+        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : UiConfig.canvasMaxHeight;
 
-        const ctx = canvas.getContext(MagicValues.canvasContext);
+        const ctx = canvas.getContext(UiConfig.canvasContext);
         let x     = 0, y = 0;
 
         [...Element.imagesList.children].forEach(tr => {
