@@ -29,15 +29,22 @@ const CssClass = {
     dragIndicator: 'drag-indicator'
 };
 
+const MagicValues = {
+    opacityDragging: 0.5,
+    opacityDefault: 1,
+    zoomDefault: 100,
+    canvasMaxHeight: '50vh',
+    canvasContext: '2d',
+    modalCloseTimeout: 4000
+};
+
 const Text = {
     trueValue           : 'true',
     tableRowTag         : 'tr',
     tableDataTag        : 'td',
     imageMimeTypePattern: /^image\//,
     imageSymbol         : '🎨',
-    canvasContext       : '2d',
-    horizontalMode      : 'horizontal',
-    modalCloseTimeout   : 4000
+    horizontalMode      : 'horizontal'
 };
 
 const Element = {
@@ -61,10 +68,19 @@ let dialogTimeout = 0;
 let dragState     = false;
 let dragSource    = null;
 
+const UiConfig = {
+    opacityDragging: 0.5,
+    opacityDefault: 1,
+    zoomDefault: 100,
+    canvasMaxHeight: '50vh',
+    canvasContext: '2d',
+    modalCloseTimeout: 4000
+};
+
 const showError = message => {
     Element.errorMessage.textContent = message;
     Element.dialog.showModal();
-    dialogTimeout = window.setTimeout(() => Element.dialog.close(), Text.modalCloseTimeout);
+    dialogTimeout = window.setTimeout(() => Element.dialog.close(), UiConfig.modalCloseTimeout);
 };
 
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -74,14 +90,16 @@ const handleDragStart = (element, isDrag = true) => {
     dragSource = element;
     if (isDrag) {
         element.classList.add(CssClass.dragOver);
-        element.style.opacity = '0.5';  // Visual feedback
+        element.style.opacity = UiConfig.opacityDragging;
     }
 };
 
-const handleDragEnd = element => {
-    element.classList.remove(CssClass.dragOver);
-    element.style.opacity = 1;
-    Element.clearButton.classList.remove(CssClass.dragOver);
+const clearDragIndicators = () => {
+    Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
+        .forEach(el => el.classList.remove(CssClass.dragIndicator));
+};
+
+const moveElementToIndicatorPosition = element => {
     const indicator = Element.imagesList.querySelector('.' + CssClass.dragIndicator);
     if (indicator) {
         if (indicator !== element && indicator !== element.nextSibling) {
@@ -89,6 +107,13 @@ const handleDragEnd = element => {
         }
         indicator.classList.remove(CssClass.dragIndicator);
     }
+};
+
+const handleDragEnd = element => {
+    element.classList.remove(CssClass.dragOver);
+    element.style.opacity = UiConfig.opacityDefault;
+    Element.clearButton.classList.remove(CssClass.dragOver);
+    moveElementToIndicatorPosition(element);
     dragState  = false;
     dragSource = null;
 };
@@ -96,12 +121,17 @@ const handleDragEnd = element => {
 const handleElementMove = (targetElement, isDrag = false) => {
     if (!targetElement || targetElement.tagName.toLowerCase() !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
-        const rect     = targetElement.getBoundingClientRect();
+        const rect = targetElement.getBoundingClientRect();
         const dragRect = dragSource.getBoundingClientRect();
-        const next     = (dragRect.top < rect.top + rect.height / 2) ? targetElement.nextElementSibling : targetElement;
-        Element.imagesList.querySelectorAll('.' + CssClass.dragIndicator)
-            .forEach(el => el.classList.remove(CssClass.dragIndicator));
-        if (next !== dragSource && next !== dragSource.nextElementSibling) {
+        const isAboveHalf = dragRect.top < rect.top + rect.height / 2;
+        const next = isAboveHalf ? targetElement.nextElementSibling : targetElement;
+
+        clearDragIndicators();
+
+        const isNotDragSource = next !== dragSource;
+        const isNotNextSibling = next !== dragSource.nextElementSibling;
+
+        if (isNotDragSource && isNotNextSibling) {
             if (next) {
                 next.classList.add(CssClass.dragIndicator);
             } else {
@@ -250,15 +280,15 @@ const clearImages = () => {
     }
     const canvas = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
-    Element.zoomSlider.value      = 100;
-    Element.zoomValue.textContent = '100%';
+    Element.zoomSlider.value      = UiConfig.zoomDefault;
+    Element.zoomValue.textContent = `${UiConfig.zoomDefault}%`;
     Element.saveButton.disabled   = true;
 };
 
 const stitchImages = e => {
     e.preventDefault();
-    Element.zoomSlider.value      = 100;
-    Element.zoomValue.textContent = '100%';
+    Element.zoomSlider.value      = UiConfig.zoomDefault;
+    Element.zoomValue.textContent = `${UiConfig.zoomDefault}%`;
     const canvas                  = Element.result.querySelector(Selector.canvas);
     if (canvas) Element.result.removeChild(canvas);
 
@@ -271,9 +301,9 @@ const stitchImages = e => {
         canvas.width           = isHorizontalMode ? sumX : maxX;
         canvas.style.maxWidth  = isHorizontalMode ? '100%' : `${canvas.width}px`;
         canvas.height          = isHorizontalMode ? maxY : sumY;
-        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : '50vh';
+        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : UiConfig.canvasMaxHeight;
 
-        const ctx = canvas.getContext(Text.canvasContext);
+        const ctx = canvas.getContext(UiConfig.canvasContext);
         let x     = 0, y = 0;
 
         [...Element.imagesList.children].forEach(tr => {
@@ -293,22 +323,31 @@ const stitchImages = e => {
     [...Element.imagesList.children].forEach(tr => {
         const fileName = tr.dataset.name;
         fetch(tr.dataset.file)
-            .then(response => response.blob())
-            .then(createImageBitmap)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network error (${response.status}): ${response.statusText}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                if (!blob.type.match(Text.imageMimeTypePattern)) {
+                    throw new Error('No valid image file');
+                }
+                return createImageBitmap(blob);
+            })
             .then(bitmap => {
                 tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1;
-                minX                   = Math.min(minX, bitmap.width);
-                maxX                   = Math.max(maxX, bitmap.width);
-                minY                   = Math.min(minY, bitmap.height);
-                maxY                   = Math.max(maxY, bitmap.height);
+                minX = Math.min(minX, bitmap.width);
+                maxX = Math.max(maxX, bitmap.width);
+                minY = Math.min(minY, bitmap.height);
+                maxY = Math.max(maxY, bitmap.height);
                 sumX += bitmap.width;
                 sumY += bitmap.height;
-
                 if (++loaded === Element.imagesList.children.length) {
                     stitchImagesOnCanvas();
                 }
             })
-            .catch(error => showError(`${error.message} File: ${fileName}`));
+            .catch(error => showError(`[${fileName}] ${error.message}`));
     });
 };
 
