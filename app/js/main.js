@@ -297,19 +297,29 @@ const stitchImages = e => {
 
     const stitchImagesOnCanvas = () => {
         const isHorizontalMode = document.querySelector(Selector.mode).value === Text.horizontalMode;
-        const canvas           = document.createElement(Selector.canvas);
-        canvas.width           = isHorizontalMode ? sumX : maxX;
-        canvas.style.maxWidth  = isHorizontalMode ? '100%' : `${canvas.width}px`;
-        canvas.height          = isHorizontalMode ? maxY : sumY;
-        canvas.style.maxHeight = isHorizontalMode ? `${canvas.height}px` : UiConfig.canvasMaxHeight;
+        const canvas = document.createElement(Selector.canvas);
+        canvas.width = isHorizontalMode ? sumX : maxX;
+        canvas.style.maxWidth = isHorizontalMode ? '100%' : `${canvas.width}px`;
+        canvas.height = isHorizontalMode ? maxY : sumY;
+        
+        const currentZoom = parseInt(Element.zoomSlider.value, 10);
+        if (isHorizontalMode && currentZoom > 200) {
+            canvas.style.maxHeight = 'none';
+        } else {
+            canvas.style.maxHeight = isHorizontalMode ? `${UiConfig.canvasMaxHeight}` : UiConfig.canvasMaxHeight;
+        }
 
         const ctx = canvas.getContext(UiConfig.canvasContext);
-        let x     = 0, y = 0;
+        let x = 0, y = 0;
 
         [...Element.imagesList.children].forEach(tr => {
             const bitmap = bitmaps[tr.dataset.bitmapIndex];
-            const width  = Element.keepAspectCheckbox.checked ? (isHorizontalMode ? bitmap.width : canvas.width) : bitmap.width;
-            const height = Element.keepAspectCheckbox.checked ? (isHorizontalMode ? canvas.height : bitmap.height) : bitmap.height;
+            const width = Element.keepAspectCheckbox.checked 
+                ? (isHorizontalMode ? bitmap.width : canvas.width) 
+                : bitmap.width;
+            const height = Element.keepAspectCheckbox.checked 
+                ? (isHorizontalMode ? canvas.height : bitmap.height) 
+                : bitmap.height;
 
             ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, width, height);
             x += isHorizontalMode ? width : 0;
