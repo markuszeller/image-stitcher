@@ -479,7 +479,7 @@ const stitchImages = e => {
                 return createImageBitmap(blob);
             })
             .then(bitmap => {
-                tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1;
+                tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1 + '';
                 minX = Math.min(minX, bitmap.width);
                 maxX = Math.max(maxX, bitmap.width);
                 minY = Math.min(minY, bitmap.height);
