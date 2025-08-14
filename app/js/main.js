@@ -165,7 +165,7 @@ const handleDragEnd = element => {
     dragSource = null;
 };
 
-const handleElementMove = (targetElement, isDrag = false) => {
+const handleElementMove = (targetElement) => {
     if (!targetElement || targetElement.tagName.toLowerCase() !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
         const rect = targetElement.getBoundingClientRect();
@@ -317,14 +317,14 @@ const handleFileDrop = e => {
         tr.addEventListener(EventName.dragOver, (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleElementMove(tr, true);
+            handleElementMove(tr);
         });
         tr.addEventListener(EventName.dragStart, (e) => {
             e.dataTransfer.setData('text/plain', '');
             handleDragStart(tr);
         });
         tr.addEventListener(EventName.dragEnd, () => handleDragEnd(tr));
-        tr.addEventListener(EventName.drop, () => handleElementMove(tr, true));
+        tr.addEventListener(EventName.drop, () => handleElementMove(tr));
         tr.addEventListener(EventName.touchStart, (e) => {
             e.preventDefault();
             handleDragStart(tr, false);
