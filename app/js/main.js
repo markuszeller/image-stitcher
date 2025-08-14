@@ -257,7 +257,7 @@ const addEventListeners = () => {
     });
 
     Element.borderThickness.addEventListener(EventName.input, () => {
-        BorderConfig.thickness = parseInt(Element.borderThickness.value, 10);
+        BorderConfig.thickness = parseInt(Element.borderThickness.value);
         Element.thicknessValue.textContent = `${BorderConfig.thickness}px`;
         saveBorderConfig();
     });
