@@ -37,8 +37,8 @@ const Text = {
     imageMimeTypePattern: /^image\//,
     imageSymbol         : '🎨',
     horizontalMode      : 'horizontal',
-    borderTypeAround    : 'around',
-    borderTypeSeparator : 'separator'
+    displayBlock        : 'block',
+    displayNone         : 'none'
 };
 
 const BorderType = {
@@ -73,8 +73,7 @@ let dragState     = false;
 let dragSource    = null;
 
 const BorderConfig = {
-    enabled  : false,
-    type     : Text.borderTypeAround,
+    isEnabled: false,
     type     : BorderType.around,
     thickness: 2,
     color    : '#000000'
@@ -104,8 +103,7 @@ const loadBorderConfig = () => {
     if (saved) {
         try {
             const config = JSON.parse(saved);
-            BorderConfig.enabled = config.enabled || false;
-            BorderConfig.type = config.type || Text.borderTypeAround;
+            BorderConfig.isEnabled = config.isEnabled || false;
             BorderConfig.type      = config.type || BorderType.around;
             BorderConfig.thickness = config.thickness || 2;
             BorderConfig.color = config.color || '#000000';
@@ -118,6 +116,7 @@ const loadBorderConfig = () => {
 const updateBorderUI = () => {
     Element.enableBorders.checked = BorderConfig.enabled;
     Element.borderControls.style.display = BorderConfig.enabled ? 'block' : 'none';
+    Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
     
     const borderTypeRadio = document.querySelector(`input[name=border-type][value="${BorderConfig.type}"]`);
     if (borderTypeRadio) borderTypeRadio.checked = true;
@@ -243,6 +242,7 @@ const addEventListeners = () => {
     Element.enableBorders.addEventListener(EventName.change, () => {
         BorderConfig.enabled = Element.enableBorders.checked;
         Element.borderControls.style.display = BorderConfig.enabled ? 'block' : 'none';
+        Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
         saveBorderConfig();
     });
 
@@ -371,16 +371,14 @@ const stitchImages = e => {
         let totalBorderWidth = 0;
         let totalBorderHeight = 0;
         
-        if (BorderConfig.enabled) {
-            if (borderType === Text.borderTypeAround) {
+        if (BorderConfig.isEnabled) {
             if (borderType === BorderType.around) {
                 totalBorderWidth = isHorizontalMode ? 
                     (imageCount * BorderConfig.thickness * 2) : 
                     (BorderConfig.thickness * 2);
                 totalBorderHeight = isHorizontalMode ? 
-                    (BorderConfig.thickness * 2) : 
-                    (imageCount * BorderConfig.thickness * 2);
-            } else if (borderType === Text.borderTypeSeparator) {
+                    (doubleBorder) :
+                    (imageCount * doubleBorder);
             } else if (borderType === BorderType.separator) {
                 totalBorderWidth = isHorizontalMode ? 
                     ((imageCount - 1) * BorderConfig.thickness) : 0;
@@ -427,12 +425,11 @@ const stitchImages = e => {
                 ctx.strokeStyle = BorderConfig.color;
                 ctx.lineWidth = BorderConfig.thickness;
                 
-                if (borderType === Text.borderTypeAround) {
-                    ctx.strokeRect(x, y, width + BorderConfig.thickness * 2, height + BorderConfig.thickness * 2);
-                    x += isHorizontalMode ? width + BorderConfig.thickness * 2 : 0;
-                    y += isHorizontalMode ? 0 : height + BorderConfig.thickness * 2;
-                } else if (borderType === Text.borderTypeSeparator && index < imageCount - 1) {
                 if (borderType === BorderType.around) {
+                    ctx.strokeRect(x, y, width + doubleBorder, height + doubleBorder);
+                    x += isHorizontalMode ? width + doubleBorder : 0;
+                    y += isHorizontalMode ? 0 : height + doubleBorder;
+                } else if (borderType === BorderType.separator && index < imageCount - 1) {
                     if (isHorizontalMode) {
                         const lineX = x + width + BorderConfig.thickness / 2;
                         ctx.beginPath();
