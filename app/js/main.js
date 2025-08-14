@@ -373,12 +373,13 @@ const stitchImages = e => {
         
         let totalBorderWidth = 0;
         let totalBorderHeight = 0;
+        const doubleBorder = BorderConfig.thickness * 2;
         
         if (BorderConfig.isEnabled) {
             if (borderType === BorderType.around) {
                 totalBorderWidth = isHorizontalMode ? 
-                    (imageCount * BorderConfig.thickness * 2) : 
-                    (BorderConfig.thickness * 2);
+                    (imageCount * doubleBorder) :
+                    (doubleBorder);
                 totalBorderHeight = isHorizontalMode ? 
                     (doubleBorder) :
                     (imageCount * doubleBorder);
