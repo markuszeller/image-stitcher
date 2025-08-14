@@ -20,22 +20,14 @@ const Attribute = {
 };
 
 const Selector = {
-    mode  : 'input[name=mode]:checked',
-    canvas: 'canvas'
+    mode      : 'input[name=mode]:checked',
+    canvas    : 'canvas',
+    borderType: 'input[name=border-type]:checked'
 };
 
 const CssClass = {
     dragOver: 'drag-over',
     dragIndicator: 'drag-indicator'
-};
-
-const MagicValues = {
-    opacityDragging: 0.5,
-    opacityDefault: 1,
-    zoomDefault: 100,
-    canvasMaxHeight: '50vh',
-    canvasContext: '2d',
-    modalCloseTimeout: 4000
 };
 
 const Text = {
@@ -44,8 +36,15 @@ const Text = {
     tableDataTag        : 'td',
     imageMimeTypePattern: /^image\//,
     imageSymbol         : '🎨',
-    horizontalMode      : 'horizontal'
+    horizontalMode      : 'horizontal',
+    displayBlock        : 'block',
+    displayNone         : 'none'
 };
+
+const BorderType = {
+    around    : 'around',
+    separator : 'separator',
+}
 
 const Element = {
     fileDrop          : document.getElementById('files'),
@@ -59,14 +58,31 @@ const Element = {
     zoomValue         : document.getElementById('zoom-value'),
     themeSelector     : document.getElementById('theme-select'),
     dialog            : document.getElementById('error-modal'),
-    errorMessage      : document.getElementById('error-modal').querySelector('.error-message')
+    errorMessage      : document.querySelector('#error-modal .error-message'),
+    enableBorders     : document.getElementById('enable-borders'),
+    borderControls    : document.getElementById('border-controls'),
+    borderThickness   : document.getElementById('border-thickness'),
+    thicknessValue    : document.getElementById('thickness-value'),
+    borderColor       : document.getElementById('border-color')
 };
+
+const ConfigKey = {
+    theme: 'theme',
+    border: 'borderConfig'
+}
 
 const themes = [...Element.themeSelector.querySelectorAll('option')].map(option => option.value);
 
 let dialogTimeout = 0;
 let dragState     = false;
 let dragSource    = null;
+
+const BorderConfig = {
+    isEnabled: false,
+    type     : BorderType.around,
+    thickness: 2,
+    color    : '#000000'
+};
 
 const UiConfig = {
     opacityDragging: 0.5,
@@ -81,6 +97,37 @@ const showError = message => {
     Element.errorMessage.textContent = message;
     Element.dialog.showModal();
     dialogTimeout = window.setTimeout(() => Element.dialog.close(), UiConfig.modalCloseTimeout);
+};
+
+const saveBorderConfig = () => {
+    localStorage.setItem(ConfigKey.border, JSON.stringify(BorderConfig));
+};
+
+const loadBorderConfig = () => {
+    const storedConfig = localStorage.getItem(ConfigKey.border);
+    if (null !== storedConfig) {
+        try {
+            const config = JSON.parse(storedConfig);
+            BorderConfig.isEnabled = config.isEnabled || false;
+            BorderConfig.type      = config.type || BorderType.around;
+            BorderConfig.thickness = config.thickness || 2;
+            BorderConfig.color = config.color || '#000000';
+        } catch (e) {
+            console.warn('Failed to load border configuration from localStorage');
+        }
+    }
+};
+
+const updateBorderUI = () => {
+    Element.enableBorders.checked = BorderConfig.isEnabled;
+    Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
+    
+    const borderTypeRadio = document.querySelector(`input[name=border-type][value="${BorderConfig.type}"]`);
+    if (borderTypeRadio) borderTypeRadio.checked = true;
+    
+    Element.borderThickness.value = BorderConfig.thickness;
+    Element.thicknessValue.textContent = `${BorderConfig.thickness}px`;
+    Element.borderColor.value = BorderConfig.color;
 };
 
 const getTouchTargetElement = e => document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -118,7 +165,7 @@ const handleDragEnd = element => {
     dragSource = null;
 };
 
-const handleElementMove = (targetElement, isDrag = false) => {
+const handleElementMove = (targetElement) => {
     if (!targetElement || targetElement.tagName.toLowerCase() !== Text.tableRowTag || !dragSource) return;
     if (targetElement !== dragSource) {
         const rect = targetElement.getBoundingClientRect();
@@ -192,8 +239,32 @@ const addEventListeners = () => {
         const value = Element.themeSelector.value;
         document.body.setAttribute(Attribute.dataTheme, value);
         if (themes.includes(value)) {
-            localStorage.setItem('theme', value);
+            localStorage.setItem(ConfigKey.theme, value);
         }
+    });
+
+    Element.enableBorders.addEventListener(EventName.change, () => {
+        BorderConfig.isEnabled               = Element.enableBorders.checked;
+        Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
+        saveBorderConfig();
+    });
+
+    document.addEventListener(EventName.change, (e) => {
+        if (e.target.name === 'border-type') {
+            BorderConfig.type = e.target.value;
+            saveBorderConfig();
+        }
+    });
+
+    Element.borderThickness.addEventListener(EventName.input, () => {
+        BorderConfig.thickness = parseInt(Element.borderThickness?.value);
+        Element.thicknessValue.textContent = `${BorderConfig.thickness}px`;
+        saveBorderConfig();
+    });
+
+    Element.borderColor.addEventListener(EventName.change, () => {
+        BorderConfig.color = Element.borderColor.value;
+        saveBorderConfig();
     });
 
     Element.fileDrop.addEventListener(EventName.drop, handleFileDrop);
@@ -246,14 +317,14 @@ const handleFileDrop = e => {
         tr.addEventListener(EventName.dragOver, (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleElementMove(tr, true);
+            handleElementMove(tr);
         });
         tr.addEventListener(EventName.dragStart, (e) => {
             e.dataTransfer.setData('text/plain', '');
             handleDragStart(tr);
         });
         tr.addEventListener(EventName.dragEnd, () => handleDragEnd(tr));
-        tr.addEventListener(EventName.drop, () => handleElementMove(tr, true));
+        tr.addEventListener(EventName.drop, () => handleElementMove(tr));
         tr.addEventListener(EventName.touchStart, (e) => {
             e.preventDefault();
             handleDragStart(tr, false);
@@ -297,10 +368,33 @@ const stitchImages = e => {
 
     const stitchImagesOnCanvas = () => {
         const isHorizontalMode = document.querySelector(Selector.mode).value === Text.horizontalMode;
+        const borderType = document.querySelector(Selector.borderType).value;
+        const imageCount = Element.imagesList.children.length;
+        
+        let totalBorderWidth = 0;
+        let totalBorderHeight = 0;
+        const doubleBorder = BorderConfig.thickness * 2;
+        
+        if (BorderConfig.isEnabled) {
+            if (borderType === BorderType.around) {
+                totalBorderWidth = isHorizontalMode ? 
+                    (imageCount * doubleBorder) :
+                    (doubleBorder);
+                totalBorderHeight = isHorizontalMode ? 
+                    (doubleBorder) :
+                    (imageCount * doubleBorder);
+            } else if (borderType === BorderType.separator) {
+                totalBorderWidth = isHorizontalMode ? 
+                    ((imageCount - 1) * BorderConfig.thickness) : 0;
+                totalBorderHeight = isHorizontalMode ? 
+                    0 : ((imageCount - 1) * BorderConfig.thickness);
+            }
+        }
+        
         const canvas = document.createElement(Selector.canvas);
-        canvas.width = isHorizontalMode ? sumX : maxX;
+        canvas.width = isHorizontalMode ? sumX + totalBorderWidth : maxX + totalBorderWidth;
         canvas.style.maxWidth = isHorizontalMode ? '100%' : `${canvas.width}px`;
-        canvas.height = isHorizontalMode ? maxY : sumY;
+        canvas.height = isHorizontalMode ? maxY + totalBorderHeight : sumY + totalBorderHeight;
         
         const currentZoom = parseInt(Element.zoomSlider.value, 10);
         if (isHorizontalMode && currentZoom > 200) {
@@ -312,18 +406,57 @@ const stitchImages = e => {
         const ctx = canvas.getContext(UiConfig.canvasContext);
         let x = 0, y = 0;
 
-        [...Element.imagesList.children].forEach(tr => {
+        [...Element.imagesList.children].forEach((tr, index) => {
             const bitmap = bitmaps[tr.dataset.bitmapIndex];
             const width = Element.keepAspectCheckbox.checked 
-                ? (isHorizontalMode ? bitmap.width : canvas.width) 
+                ? (isHorizontalMode ? bitmap.width : canvas.width - totalBorderWidth) 
                 : bitmap.width;
             const height = Element.keepAspectCheckbox.checked 
-                ? (isHorizontalMode ? canvas.height : bitmap.height) 
+                ? (isHorizontalMode ? canvas.height - totalBorderHeight : bitmap.height) 
                 : bitmap.height;
 
-            ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, width, height);
-            x += isHorizontalMode ? width : 0;
-            y += isHorizontalMode ? 0 : height;
+            let offsetX = x;
+            let offsetY = y;
+            
+            if (BorderConfig.isEnabled && borderType === BorderType.around) {
+                offsetX += BorderConfig.thickness;
+                offsetY += BorderConfig.thickness;
+            }
+
+            ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, offsetX, offsetY, width, height);
+            
+            if (BorderConfig.isEnabled) {
+                ctx.strokeStyle = BorderConfig.color;
+                ctx.lineWidth = BorderConfig.thickness;
+                
+                if (borderType === BorderType.around) {
+                    ctx.strokeRect(x, y, width + doubleBorder, height + doubleBorder);
+                    x += isHorizontalMode ? width + doubleBorder : 0;
+                    y += isHorizontalMode ? 0 : height + doubleBorder;
+                } else if (borderType === BorderType.separator && index < imageCount - 1) {
+                    if (isHorizontalMode) {
+                        const lineX = x + width + BorderConfig.thickness / 2;
+                        ctx.beginPath();
+                        ctx.moveTo(lineX, 0);
+                        ctx.lineTo(lineX, canvas.height);
+                        ctx.stroke();
+                        x += width + BorderConfig.thickness;
+                    } else {
+                        const lineY = y + height + BorderConfig.thickness / 2;
+                        ctx.beginPath();
+                        ctx.moveTo(0, lineY);
+                        ctx.lineTo(canvas.width, lineY);
+                        ctx.stroke();
+                        y += height + BorderConfig.thickness;
+                    }
+                } else {
+                    x += isHorizontalMode ? width : 0;
+                    y += isHorizontalMode ? 0 : height;
+                }
+            } else {
+                x += isHorizontalMode ? width : 0;
+                y += isHorizontalMode ? 0 : height;
+            }
         });
 
         Element.result.appendChild(canvas);
@@ -346,7 +479,7 @@ const stitchImages = e => {
                 return createImageBitmap(blob);
             })
             .then(bitmap => {
-                tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1;
+                tr.dataset.bitmapIndex = bitmaps.push(bitmap) - 1 + '';
                 minX = Math.min(minX, bitmap.width);
                 maxX = Math.max(maxX, bitmap.width);
                 minY = Math.min(minY, bitmap.height);
@@ -361,7 +494,10 @@ const stitchImages = e => {
     });
 };
 
-Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
+Element.themeSelector.value = localStorage.getItem(ConfigKey.theme) || themes[0];
 Element.themeSelector.dispatchEvent(new Event(EventName.change));
+
+loadBorderConfig();
+updateBorderUI();
 
 addEventListeners();

@@ -70,6 +70,31 @@
             <input type="range" id="zoom-slider" min="10" max="200" value="100">
             <span id="zoom-value">100%</span>
         </div>
+        <div class="px-4">
+            <input class="form-check-input" type="checkbox" id="enable-borders">
+            <label class="form-check-label" for="enable-borders">
+              Enable borders
+            </label>
+        </div>
+        <div class="px-4" id="border-controls" style="display: none;">
+            <div class="mb-2">
+                <input type="radio" class="form-check-input h-4 w-4" name="border-type" id="border-around" value="around" checked>
+                <label class="form-check-label ml-2" for="border-around">Around each image</label>
+            </div>
+            <div class="mb-2">
+                <input type="radio" class="form-check-input h-4 w-4" name="border-type" id="border-separator" value="separator">
+                <label class="form-check-label ml-2" for="border-separator">Separator lines</label>
+            </div>
+            <div class="mb-2">
+                <label for="border-thickness">Thickness:</label>
+                <input type="range" id="border-thickness" min="1" max="20" value="2">
+                <span id="thickness-value">2px</span>
+            </div>
+            <div class="mb-2">
+                <label for="border-color">Color:</label>
+                <input type="color" id="border-color" value="#000000">
+            </div>
+        </div>
         <div class="btn-group px-4 ml-auto">
             <button class="btn btn-accent btn-outline" id="clear-button">Clear</button>
             <button class="btn btn-accent btn-outline ml-2" id="stitch-button">Stitch</button>
