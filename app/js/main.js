@@ -41,6 +41,11 @@ const Text = {
     borderTypeSeparator : 'separator'
 };
 
+const BorderType = {
+    around    : 'around',
+    separator : 'separator',
+}
+
 const Element = {
     fileDrop          : document.getElementById('files'),
     imagesList        : document.getElementById('images-list'),
@@ -70,6 +75,7 @@ let dragSource    = null;
 const BorderConfig = {
     enabled  : false,
     type     : Text.borderTypeAround,
+    type     : BorderType.around,
     thickness: 2,
     color    : '#000000'
 };
@@ -100,6 +106,7 @@ const loadBorderConfig = () => {
             const config = JSON.parse(saved);
             BorderConfig.enabled = config.enabled || false;
             BorderConfig.type = config.type || Text.borderTypeAround;
+            BorderConfig.type      = config.type || BorderType.around;
             BorderConfig.thickness = config.thickness || 2;
             BorderConfig.color = config.color || '#000000';
         } catch (e) {
@@ -366,6 +373,7 @@ const stitchImages = e => {
         
         if (BorderConfig.enabled) {
             if (borderType === Text.borderTypeAround) {
+            if (borderType === BorderType.around) {
                 totalBorderWidth = isHorizontalMode ? 
                     (imageCount * BorderConfig.thickness * 2) : 
                     (BorderConfig.thickness * 2);
@@ -373,6 +381,7 @@ const stitchImages = e => {
                     (BorderConfig.thickness * 2) : 
                     (imageCount * BorderConfig.thickness * 2);
             } else if (borderType === Text.borderTypeSeparator) {
+            } else if (borderType === BorderType.separator) {
                 totalBorderWidth = isHorizontalMode ? 
                     ((imageCount - 1) * BorderConfig.thickness) : 0;
                 totalBorderHeight = isHorizontalMode ? 
@@ -423,6 +432,7 @@ const stitchImages = e => {
                     x += isHorizontalMode ? width + BorderConfig.thickness * 2 : 0;
                     y += isHorizontalMode ? 0 : height + BorderConfig.thickness * 2;
                 } else if (borderType === Text.borderTypeSeparator && index < imageCount - 1) {
+                if (borderType === BorderType.around) {
                     if (isHorizontalMode) {
                         const lineX = x + width + BorderConfig.thickness / 2;
                         ctx.beginPath();
