@@ -30,15 +30,6 @@ const CssClass = {
     dragIndicator: 'drag-indicator'
 };
 
-const MagicValues = {
-    opacityDragging: 0.5,
-    opacityDefault: 1,
-    zoomDefault: 100,
-    canvasMaxHeight: '50vh',
-    canvasContext: '2d',
-    modalCloseTimeout: 4000
-};
-
 const Text = {
     trueValue           : 'true',
     tableRowTag         : 'tr',
