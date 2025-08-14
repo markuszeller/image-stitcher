@@ -66,6 +66,11 @@ const Element = {
     borderColor       : document.getElementById('border-color')
 };
 
+const ConfigKey = {
+    theme: 'theme',
+    border: 'borderConfig'
+}
+
 const themes = [...Element.themeSelector.querySelectorAll('option')].map(option => option.value);
 
 let dialogTimeout = 0;
@@ -95,11 +100,11 @@ const showError = message => {
 };
 
 const saveBorderConfig = () => {
-    localStorage.setItem('borderConfig', JSON.stringify(BorderConfig));
+    localStorage.setItem(ConfigKey.border, JSON.stringify(BorderConfig));
 };
 
 const loadBorderConfig = () => {
-    const saved = localStorage.getItem('borderConfig');
+    const saved = localStorage.getItem(ConfigKey.border);
     if (saved) {
         try {
             const config = JSON.parse(saved);
@@ -114,8 +119,7 @@ const loadBorderConfig = () => {
 };
 
 const updateBorderUI = () => {
-    Element.enableBorders.checked = BorderConfig.enabled;
-    Element.borderControls.style.display = BorderConfig.enabled ? 'block' : 'none';
+    Element.enableBorders.checked = BorderConfig.isEnabled;
     Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
     
     const borderTypeRadio = document.querySelector(`input[name=border-type][value="${BorderConfig.type}"]`);
@@ -235,13 +239,12 @@ const addEventListeners = () => {
         const value = Element.themeSelector.value;
         document.body.setAttribute(Attribute.dataTheme, value);
         if (themes.includes(value)) {
-            localStorage.setItem('theme', value);
+            localStorage.setItem(ConfigKey.theme, value);
         }
     });
 
     Element.enableBorders.addEventListener(EventName.change, () => {
-        BorderConfig.enabled = Element.enableBorders.checked;
-        Element.borderControls.style.display = BorderConfig.enabled ? 'block' : 'none';
+        BorderConfig.isEnabled               = Element.enableBorders.checked;
         Element.borderControls.style.display = BorderConfig.isEnabled ? Text.displayBlock : Text.displayNone;
         saveBorderConfig();
     });
@@ -490,7 +493,7 @@ const stitchImages = e => {
     });
 };
 
-Element.themeSelector.value = localStorage.getItem('theme') || themes[0];
+Element.themeSelector.value = localStorage.getItem(ConfigKey.theme) || themes[0];
 Element.themeSelector.dispatchEvent(new Event(EventName.change));
 
 loadBorderConfig();
