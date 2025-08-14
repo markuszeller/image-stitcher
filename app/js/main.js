@@ -53,7 +53,7 @@ const Element = {
     zoomValue         : document.getElementById('zoom-value'),
     themeSelector     : document.getElementById('theme-select'),
     dialog            : document.getElementById('error-modal'),
-    errorMessage      : document.getElementById('error-modal').querySelector('.error-message'),
+    errorMessage      : document.querySelector('#error-modal .error-message'),
     enableBorders     : document.getElementById('enable-borders'),
     borderControls    : document.getElementById('border-controls'),
     borderThickness   : document.getElementById('border-thickness'),
