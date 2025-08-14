@@ -418,14 +418,14 @@ const stitchImages = e => {
             let offsetX = x;
             let offsetY = y;
             
-            if (BorderConfig.enabled && borderType === Text.borderTypeAround) {
+            if (BorderConfig.isEnabled && borderType === BorderType.around) {
                 offsetX += BorderConfig.thickness;
                 offsetY += BorderConfig.thickness;
             }
 
             ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, offsetX, offsetY, width, height);
             
-            if (BorderConfig.enabled) {
+            if (BorderConfig.isEnabled) {
                 ctx.strokeStyle = BorderConfig.color;
                 ctx.lineWidth = BorderConfig.thickness;
                 
