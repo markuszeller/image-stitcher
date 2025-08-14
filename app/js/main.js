@@ -104,10 +104,10 @@ const saveBorderConfig = () => {
 };
 
 const loadBorderConfig = () => {
-    const saved = localStorage.getItem(ConfigKey.border);
-    if (saved) {
+    const storedConfig = localStorage.getItem(ConfigKey.border);
+    if (null !== storedConfig) {
         try {
-            const config = JSON.parse(saved);
+            const config = JSON.parse(storedConfig);
             BorderConfig.isEnabled = config.isEnabled || false;
             BorderConfig.type      = config.type || BorderType.around;
             BorderConfig.thickness = config.thickness || 2;
