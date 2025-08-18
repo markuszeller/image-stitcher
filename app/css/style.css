@@ -1,3 +1,46 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --container-center: true;
+  --spacing-18: 4.5rem;
+  --spacing-72: 18rem;
+  --color-accent: #3b82f6;
+  --radius-xl: 1rem;
+  --shadow-dropzone: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-text: #1f2937;
+  --color-border: #e5e7eb;
+  --color-input: #f9fafb;
+  --color-button: #3b82f6;
+  --color-button-hover: #2563eb;
+  --color-error: #ef4444;
+}
+
+[data-theme="dark"] {
+  --color-bg: #111827;
+  --color-text: #f9fafb;
+  --color-border: #374151;
+  --color-input: #1f2937;
+  --color-button: #60a5fa;
+  --color-button-hover: #3b82f6;
+  --color-error: #f87171;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input, select, button {
+  background-color: var(--color-input);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+button:hover {
+  background-color: var(--color-button-hover);
+}
